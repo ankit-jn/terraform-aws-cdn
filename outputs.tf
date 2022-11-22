@@ -34,6 +34,11 @@ output "oai_iam_arn" {
     value       = aws_cloudfront_origin_access_identity.this.iam_arn
 }
 
+output "oai_path" {
+    description = "A shortcut to the full path for the origin access identity to use in CloudFront."
+    value       = aws_cloudfront_origin_access_identity.this.cloudfront_access_identity_path
+}
+
 ## Cloudfront Public Key
 output "public_key_id" {
     description = "The identifier for the public key."

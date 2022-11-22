@@ -145,3 +145,49 @@ variable "enable_additional_moniroting" {
     type        = bool
     default     = false
 }
+
+variable "origins" {
+    description = <<EOF
+List of Cloudfront Distribution's Origins Configiration Map with following key-pairs
+
+origin_id: (Required) A unique identifier for the origin.
+origin_path: (Optional) Directory in origin from where CloudFront will request the content from.
+domain_name: (Required) The DNS domain name of either the S3 bucket, or web site of your custom origin.
+connection_attempts: (Optional) The number of times that CloudFront attempts to connect to the origin.
+connection_timeout: (Optional) The number of seconds that CloudFront waits when trying to establish a connection to the origin.
+origin_access_control_id: (Optional) The unique identifier of a CloudFront origin access control for this origin.
+
+custom_headers: (Optional) The Map of headers (Name/value pairs) to specify header data that will be sent to the origin.
+origin_access_identity: The CloudFront origin access identity to associate with the S3 origin.
+custom_origin_config: Custom origin Configuration Map with following key-pairs:
+        http_port                : (Required) The HTTP port the custom origin listens on.
+        https_port               : (Required) The HTTPS port the custom origin listens on.
+        origin_protocol_policy   : (Required) The origin protocol policy to apply to your origin.
+        origin_ssl_protocols     : (Required) The list of SSL/TLS protocols that CloudFront will use when communicating with origin over HTTPS.
+        origin_keepalive_timeout : (Optional) The Custom KeepAlive timeout, in seconds.
+        origin_read_timeout      : (Optional) The Custom Read timeout, in seconds.
+
+enable_origin_shield: Flag to decide if origin shield is enabled, help to reduce the load on your origin.
+shield_region: The AWS Region (region-code) for Origin Shield.
+
+EOF
+    type = any
+    
+    validation {
+        condition = length(var.origins) > 0
+        error_message = "At least one origin is required."
+    }
+}
+
+variable "origin_groups" {
+    description = <<EOF
+List of Origin Groups Map with the following key-pairs, for the distribution
+
+origin_group_id: (Required) A unique identifier for the origin group.
+failover_status_codes: (Required) A list of HTTP status codes for the origin group's failover criteria.
+primary_member: (Required) The unique identifier of the primary member origin.
+secondary_member: (Required) The unique identifier of the secondary member origin.
+EOF
+    type = any
+    default = []
+}
