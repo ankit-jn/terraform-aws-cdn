@@ -59,12 +59,12 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 #### origins
 
 | Name | Description | Type | Default | Required | Example |
-|:------|:------|:------|:------|:------:|:------:|
+|:------|:------|:------|:------|:------:|:------|
 | <a name="origin_id"></a> [origin_id](#input\_origin\_id) | A unique identifier for the origin. | `string` |  | yes |  |
 | <a name="origin_path"></a> [origin_path](#input\_origin\_path) | Directory in origin from where CloudFront will request the content from. | `string` | `""` | no |  |
 | <a name="domain_name"></a> [domain_name](#input\_domain\_name) | The DNS domain name of either the S3 bucket, or web site of your custom origin. | `string` |  | yes |  |
-| <a name="connection_attempts"></a> [connection_attempts](#input\_connection\_attempts) | The number of times that CloudFront attempts to connect to the origin. | `number` | 3 | no |  |
-| <a name="connection_timeout"></a> [connection_timeout](#input\_connection\_timeout) | The number of seconds that CloudFront waits when trying to establish a connection to the origin. | `number` | 10 | no |  |
+| <a name="connection_attempts"></a> [connection_attempts](#input\_connection\_attempts) | The number of times that CloudFront attempts to connect to the origin. | `number` | `3` | no |  |
+| <a name="connection_timeout"></a> [connection_timeout](#input\_connection\_timeout) | The number of seconds that CloudFront waits when trying to establish a connection to the origin. | `number` | `10` | no |  |
 | <a name="origin_access_control_id"></a> [origin_access_control_id](#input\_origin\_access\_control\_id) | The unique identifier of a CloudFront origin access control for this origin. | `string` | `null` | no |  |
 | <a name="custom_headers"></a> [custom_headers](#input\_custom\_headers) | The Map of headers (Name/value pairs) to specify header data that will be sent to the origin. | `map(string)` | `{}` | no | <pre>{<br>  "X-alb-protection" = "testing"<br>} |
 | <a name="origin_access_identity"></a> [origin_access_identity](#input\_origin\_access\_identity) | The CloudFront origin access identity to associate with the S3 origin. | `string` | `null` | no |  |
@@ -80,17 +80,17 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="https_port"></a> [https_port](#input\_https\_port) | The HTTPS port the custom origin listens on. | `number` |  | yes |
 | <a name="origin_protocol_policy"></a> [origin_protocol_policy](#input\_origin\_protocol\_policy) | The origin protocol policy to apply to your origin. | `string` |  | yes |
 | <a name="origin_ssl_protocols"></a> [origin_ssl_protocols](#input\_origin\_ssl\_protocols) | The list of SSL/TLS protocols that CloudFront will use when communicating with origin over HTTPS. | `list(string)` |  | yes |
-| <a name="origin_keepalive_timeout"></a> [origin_keepalive_timeout](#input\_origin\_keepalive\_timeout) | The Custom KeepAlive timeout, in seconds. | `number` | 60 | no |
-| <a name="origin_read_timeout"></a> [origin_read_timeout](#input\_origin\_read\_timeout) | The Custom Read timeout, in seconds. | `number` | 60 | no |
+| <a name="origin_keepalive_timeout"></a> [origin_keepalive_timeout](#input\_origin\_keepalive\_timeout) | The Custom KeepAlive timeout, in seconds. | `number` | `60` | no |
+| <a name="origin_read_timeout"></a> [origin_read_timeout](#input\_origin\_read\_timeout) | The Custom Read timeout, in seconds. | `number` | `60` | no |
 
 #### origin_groups
 
-| Name | Description | Type | Default | Required |
-|:------|:------|:------|:------|:------:|
-| <a name="origin_group_id"></a> [origin_group_id](#input\_origin\_group\_id) | A unique identifier for the origin group. | `string` |  | yes |
-| <a name="failover_status_codes"></a> [failover_status_codes](#input\_failover\_status\_codes) | A list of HTTP status codes for the origin group's failover criteria. | `list(number)` |  | yes |
-| <a name="primary_member"></a> [primary_member](#input\_primary\_member) | The unique identifier of the primary member origin. | `string` |  | yes |
-| <a name="secondary_member"></a> [secondary_member](#input\_secondary\_member) | The unique identifier of the secondary member origin. | `string` |  | yes |
+| Name | Description | Type | Required |
+|:------|:------|:------|:------:|
+| <a name="origin_group_id"></a> [origin_group_id](#input\_origin\_group\_id) | A unique identifier for the origin group. | `string` | yes |
+| <a name="failover_status_codes"></a> [failover_status_codes](#input\_failover\_status\_codes) | A list of HTTP status codes for the origin group's failover criteria. | `list(number)` | yes |
+| <a name="primary_member"></a> [primary_member](#input\_primary\_member) | The unique identifier of the primary member origin. | `string` | yes |
+| <a name="secondary_member"></a> [secondary_member](#input\_secondary\_member) | The unique identifier of the secondary member origin. | `string` | yes |
 
 ### Outputs
 
