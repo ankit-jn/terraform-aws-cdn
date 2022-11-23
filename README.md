@@ -6,6 +6,8 @@ A Terraform module for configuring Content Delivery Network in AWS
 This module features the following components to be provisioned:
 
 - Cloudfront Distribution [[aws_cloudfront_distribution](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_distribution)]
+- Origin Request Policy [[aws_cloudfront_origin_request_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_origin_request_policy)]
+- Cache Policy [[aws_cloudfront_cache_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_cache_policy)]
 - Origin Access Identity [[aws_cloudfront_origin_access_identity](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_origin_access_identity)]
 - Cloudfront Public Key [[aws_cloudfront_public_key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_public_key)]
 - Additional Cloudwatch Monitoring for CDN [[aws_cloudfront_monitoring_subscription](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_monitoring_subscription)]
@@ -34,8 +36,8 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 |:------|:------|:------|:------|:------:|:------|
 | <a name="enabled"></a> [enabled](#input\_enabled) | Flag to decide if the distribution is enabled to accept end user requests for content. | `bool` | `true` | no |  |
 | <a name="ipv6_enabled"></a> [ipv6_enabled](#input\_ipv6\_enabled) | Flag to decide if ipv6 is enabled for the distribution. | `bool` | `false` | no |  |
-| <a name="http_version"></a> [http_version](#input\_http\_version) | The maximum HTTP version to support on the distribution. | `string` | `http2` | no |  |
-| <a name="price_class"></a> [price_class](#input\_price\_class) | The price class for this distribution. | `string` | `PriceClass_All` | no |  |
+| <a name="http_version"></a> [http_version](#input\_http\_version) | The maximum HTTP version to support on the distribution. | `string` | `"http2"` | no |  |
+| <a name="price_class"></a> [price_class](#input\_price\_class) | The price class for this distribution. | `string` | `"PriceClass_All"` | no |  |
 | <a name="aliases"></a> [aliases](#input\_aliases) | List of extra CNAMEs (alternate domain names) for this distribution. | `list(string)` | `[]` | no |  |
 | <a name="default_root_object"></a> [default_root_object](#input\_default\_root\_object) | The object that CloudFront will return when an end user requests the root URL. | `string` | `"index.html"` | no |  |
 | <a name="retain_on_delete"></a> [retain_on_delete](#input\_retain\_on\_delete) | Flag to decide if disable the distribution instead of deleting it when destroying the resource through Terraform. | `bool` | `false` | no |  |
@@ -54,7 +56,7 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="origins"></a> [origins](#origins) | List of Cloudfront Distribution's Origins Configiration Map. | `any` |  | yes |  |
 | <a name="origin_groups"></a> [origin_groups](#origin\_groups) | List of Origin Groups Map. | `any` | `[]` | no |  |
 | <a name="default_cache_behavior"></a> [default_cache_behavior](#cache\_behavior) | The default cache behaviour for the distribution. | `any` |  | yes |  |
-| <a name="ordered_cache_behaviors"></a> [ordered_cache_behaviors](#cache\_behaviors) | The List of configuration map of Cache behaviours for the distribution. | `any` | `[]` | no |  |
+| <a name="ordered_cache_behaviors"></a> [ordered_cache_behaviors](#cache\_behavior) | The List of configuration map of Cache behaviours for the distribution. | `any` | `[]` | no |  |
 | <a name="origin_request_policy"></a> [origin_request_policy](#origin\_request\_policy) | List of Configuration Map for Origin Request Policies to be provisioned. | `any` | `[]` | no |  |
 | <a name="cache_policy"></a> [cache_policy](#cache_policy) | List of Configuration Map for Cache Policies to be provisioned. | `any` | `[]` | no |  |
 
@@ -161,8 +163,8 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="public_key_id"></a> [public_key_id](#output\_public\_key\_id) | `string` | The identifier for the public key. |
 | <a name="public_key_etag"></a> [public_key_etag](#output\_public\_key\_etag) | `string` | The current version of the public key. |
 | <a name="monitoring_subscription_id"></a> [monitoring_subscription_id](#output\_monitoring\_subscription\_id) | `string` | The ID of the CloudFront monitoring subscription. |
-| <a name="origin_request_policies"></a> [origin_request_policies](#output\_origin\_request\_policies) | `map(string)` | Map of The Origin Request Policies where each entry will be a key-pair of Origin Request Policy Name and nested map of attributes (id and etag) for the policy. |
-| <a name="cache_policies"></a> [cache_policies](#output\_cache\_policies) | `map(string)` | Map of The Cache Policies where each entry will be a key-pair of Cache Policy Name and nested map of attributes (id and etag) for the policy. |
+| <a name="origin_request_policies"></a> [origin_request_policies](#output\_origin\_request\_policies) | `map(map(string))` | Map of The Origin Request Policies where each entry will be a key-pair of Origin Request Policy Name and nested map of attributes (id and etag) for the policy. |
+| <a name="cache_policies"></a> [cache_policies](#output\_cache\_policies) | `map(map(string))` | Map of The Cache Policies where each entry will be a key-pair of Cache Policy Name and nested map of attributes (id and etag) for the policy. |
 
 ### Authors
 
