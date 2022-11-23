@@ -76,18 +76,77 @@ resource aws_cloudfront_distribution "this" {
         }
     }
 
-
     default_cache_behavior {
+        target_origin_id = var.default_cache_behavior.target_origin_id
+
+        viewer_protocol_policy = var.default_cache_behavior.viewer_protocol_policy
+        path_pattern = try(var.default_cache_behavior.path_pattern, "*")
+        
+        allowed_methods = try(var.default_cache_behavior.allowed_methods, ["GET", "HEAD"])
+        cached_methods = try(var.default_cache_behavior.cached_methods, ["GET", "HEAD"])
+        
+        compress = try(var.default_cache_behavior.compress, false)
+
+        default_ttl = try(var.default_cache_behavior.default_ttl, 86400) ## default 86400 seconds (i.e.24 hours)
+        min_ttl     = try(var.default_cache_behavior.min_ttl, 0) ## default 0 second
+        max_ttl     = try(var.default_cache_behavior.max_ttl, 31536000) ## default 31536000 seconds (i.e.365 days)
+        
+        smooth_streaming = try(var.default_cache_behavior.smooth_streaming, true)
         ## TO DO
+        # field_level_encryption_id = null
+        # realtime_log_config_arn = null
+
+        trusted_signers     = try(var.default_cache_behavior.trusted_signers, null)
+        trusted_key_groups  = try(var.default_cache_behavior.trusted_key_groups, null)
+
+        cache_policy_id = can(var.default_cache_behavior.cache_policy_name) ? aws_cloudfront_cache_policy.this[var.default_cache_behavior.cache_policy_name].id : null
+        origin_request_policy_id = can(var.default_cache_behavior.origin_request_policy_name) ? aws_cloudfront_origin_request_policy.this[var.default_cache_behavior.origin_request_policy_name].id : null
+
+        ## TO DO
+        # forwarded_values {}
+        # lambda_function_association {}
+        # function_association {}
     }
 
-    ordered_cache_behavior {
-        ## TO DO
+    dynamic "ordered_cache_behavior" {
+        for_each = var.default_cache_behaviors
+        iterator = cache_behavior
+
+        content {
+            target_origin_id = cache_behavior.value.target_origin_id
+
+            viewer_protocol_policy = cache_behavior.value.viewer_protocol_policy
+            path_pattern = try(cache_behavior.value.path_pattern, "*")
+            
+            allowed_methods = try(cache_behavior.value.allowed_methods, ["GET", "HEAD"])
+            cached_methods = try(cache_behavior.value.cached_methods, ["GET", "HEAD"])
+            
+            compress = try(cache_behavior.value.compress, false)
+
+            default_ttl = try(cache_behavior.value.default_ttl, 86400) ## default 86400 seconds (i.e.24 hours)
+            min_ttl     = try(cache_behavior.value.min_ttl, 0) ## default 0 second
+            max_ttl     = try(cache_behavior.value.max_ttl, 31536000) ## default 31536000 seconds (i.e.365 days)
+            
+            smooth_streaming = try(cache_behavior.value.smooth_streaming, true)
+            ## TO DO
+            # field_level_encryption_id = null
+            # realtime_log_config_arn = null
+
+            trusted_signers     = try(cache_behavior.value.trusted_signers, null)
+            trusted_key_groups  = try(cache_behavior.value.trusted_key_groups, null)
+
+            cache_policy_id = can(cache_behavior.value.cache_policy_name) ? aws_cloudfront_cache_policy.this[cache_behavior.value.cache_policy_name].id : null
+            origin_request_policy_id = can(cache_behavior.value.origin_request_policy_name) ? aws_cloudfront_origin_request_policy.this[cache_behavior.value.origin_request_policy_name].id : null
+
+            ## TO DO
+            # forwarded_values {}
+            # lambda_function_association {}
+            # function_association {}
+        }
     }
 
-    viewer_certificate {
-        ## TO DO
-    }
+    ## TO DO
+    # viewer_certificate {}
     
     is_ipv6_enabled = var.ipv6_enabled
     http_version = var.http_version
@@ -132,29 +191,4 @@ resource aws_cloudfront_distribution "this" {
     }
 
     tags = var.tags
-}
-
-resource aws_cloudfront_origin_access_identity "this" {
-    count = var.create_origin_access_identity ? 1 : 0
-    
-    comment = var.oai_comments
-}
-
-resource aws_cloudfront_public_key "this" {
-    count = var.create_cloudfront_public_key ? 1 : 0
-
-    comment     = coalesce(var.cloudfront_public_key.comments, var.cloudfront_public_key.name)
-    encoded_key = file("${path.root}/${var.cloudfront_public_key.file}")
-    name        = var.cloudfront_public_key.name
-}
-
-resource aws_cloudfront_monitoring_subscription "this" {
-  
-    distribution_id = aws_cloudfront_distribution.this.id
-
-    monitoring_subscription {
-        realtime_metrics_subscription_config {
-            realtime_metrics_subscription_status = var.enable_additional_moniroting ? "Enabled" : "Disabled"
-        }
-    }
 }

@@ -53,6 +53,10 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="enable_additional_moniroting"></a> [enable_additional_moniroting](#input\_enable\_additional\_moniroting) | Flag to decide if additional CloudWatch metrics are enabled for a CloudFront distribution. | `bool` | `false` | no |  |
 | <a name="origins"></a> [origins](#origins) | List of Cloudfront Distribution's Origins Configiration Map. | `any` |  | yes |  |
 | <a name="origin_groups"></a> [origin_groups](#origin\_groups) | List of Origin Groups Map. | `any` | `[]` | no |  |
+| <a name="default_cache_behavior"></a> [default_cache_behavior](#cache\_behavior) | The default cache behaviour for the distribution. | `any` |  | yes |  |
+| <a name="ordered_cache_behaviors"></a> [ordered_cache_behaviors](#cache\_behaviors) | The List of configuration map of Cache behaviours for the distribution. | `any` | `[]` | no |  |
+| <a name="origin_request_policy"></a> [origin_request_policy](#origin\_request\_policy) | List of Configuration Map for Origin Request Policies to be provisioned. | `any` | `[]` | no |  |
+| <a name="cache_policy"></a> [cache_policy](#cache_policy) | List of Configuration Map for Cache Policies to be provisioned. | `any` | `[]` | no |  |
 
 ### Nested Configuration Maps:  
 
@@ -92,6 +96,56 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="primary_member"></a> [primary_member](#input\_primary\_member) | The unique identifier of the primary member origin. | `string` | yes |
 | <a name="secondary_member"></a> [secondary_member](#input\_secondary\_member) | The unique identifier of the secondary member origin. | `string` | yes |
 
+#### cache_behavior
+
+| Name | Description | Type | Default | Required | Example |
+|:------|:------|:------|:------|:------:|:------|
+| <a name="target_origin_id"></a> [target_origin_id](#input\_target\_origin\_id) | The value of ID for the origin that CloudFront will use to route requests to, when a request matches the path pattern either for a cache behavior or for the default cache behavior. | `string` |  | yes |  |
+| <a name="viewer_protocol_policy"></a> [viewer_protocol_policy](#input\_viewer\_protocol\_policy) | The protocol that users can use to access the files in the origin. | `string` |  | yes |  |
+| <a name="path_pattern"></a> [path_pattern](#input\_path\_pattern) | The pattern (for example, images/*.jpg) that specifies which requests this cache behavior to apply to. | `string` |  | no |  |
+| <a name="allowed_methods"></a> [allowed_methods](#input\_allowed\_methods) | The list of HTTP methods that CloudFront processes and forwards to origin. | `list(string)` | `["GET", "HEAD"]` | no |  |
+| <a name="cached_methods"></a> [cached_methods](#input\_cached\_methods) | The list of HTTP methods that CloudFront caches the response to requests for. | `list(string)` | `["GET", "HEAD"]` | no |  |
+| <a name="compress"></a> [compress](#input\_compress) | Flag to decide if CloudFront compress the content automatically for web requests that include Accept-Encoding: gzip in the request header. | `bool` | `false` | no |  |
+| <a name="default_ttl"></a> [default_ttl](#input\_default\_ttl) | The default amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request in the absence of an Cache-Control max-age or Expires header. | `number` | `86400` | no |  |
+| <a name="min_ttl"></a> [min_ttl](#input\_min\_ttl) | The minimum amount of time, the objects to stay in CloudFront caches before CloudFront queries your origin to see whether the object has been updated. | `number` | `0` | no |  |
+| <a name="max_ttl"></a> [max_ttl](#input\_max\_ttl) | The maximum amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request to your origin to determine whether the object has been updated. | `number` | `31536000` | no |  |
+| <a name="smooth_streaming"></a> [smooth_streaming](#input\_smooth\_streaming) | Indicates whether you want to distribute media files in Microsoft Smooth Streaming format. | `bool` | `true` | no |  |
+| <a name="trusted_signers"></a> [trusted_signers](#input\_trusted\_signers) | List of AWS account IDs (or self) that you want to allow to create signed URLs for private content. | `list(string)` | `null` | no |  |
+| <a name="trusted_key_groups"></a> [trusted_key_groups](#input\_trusted\_key\_groups) | List of nested attributes for active trusted key groups, if the distribution is set up to serve private content with signed URLs. | `any` | `null` | no |  |
+| <a name="origin_request_policy_name"></a> [origin_request_policy_name](#input\_origin\_request\_policy\_name) | The name of the origin request policy that is attached to the behavior (as defined in `origin_request_policy`). | `string` | `null` | no |  |
+| <a name="cache_policy_name"></a> [cache_policy_name](#input\_cache\_policy\_name) | The name of the cache policy that is attached to the cache behavior (as defined in `cache_policy`). | `string` | `null` | no |  |
+
+#### origin_request_policy
+
+| Name | Description | Type | Default | Required | Example |
+|:------|:------|:------|:------|:------:|:------|
+| <a name="name"></a> [name](#input\_name) | Unique name to identify the origin request policy. | `string` |  | yes |  |
+| <a name="comments"></a> [comments](#input\_comments) | Comment to describe the origin request policy. | `string` | `Origin Request Policy - <Policy Name>` | no |  |
+| <a name="cookie_behavior"></a> [cookie_behavior](#input\_cookie\_behavior) | Determines whether any cookies in viewer requests are included in the origin request key and automatically included in requests that CloudFront sends to the origin. | `string` | `"none"` | no |  |
+| <a name="cookies_items"></a> [cookies_items](#input\_cookies\_items) | Comma seperated List of Cookie names. | `string` | `""` | no |  |
+| <a name="header_behavior"></a> [header_behavior](#input\_header\_behavior) | Determines whether any HTTP headers are included in the origin request key and automatically included in requests that CloudFront sends to the origin.  | `string` | `"none"` | no |  |
+| <a name="headers_items"></a> [headers_items](#input\_headers\_items) | Comma seperated List of header names. | `string` | `""` | no |  |
+| <a name="query_string_behavior"></a> [query_string_behavior](#input\_query\_string\_behavior) | Determines whether any URL query strings in viewer requests are included in the origin request key and automatically included in requests that CloudFront sends to the origin. | `string` | `"none"` | no |  |
+| <a name="query_strings_items"></a> [query_strings_items](#input\_query\_strings\_items) | Comma seperated List of query strings. | `string` | `""` | no |  |
+
+#### cache_policy
+
+| Name | Description | Type | Default | Required | Example |
+|:------|:------|:------|:------|:------:|:------|
+| <a name="name"></a> [name](#input\_name) | Unique name to identify the cache policy. | `string` |  | yes |  |
+| <a name="comments"></a> [comments](#input\_comments) | Comment to describe the cache policy. | `string` | `Cache Policy - <Policy Name>` | no |  |
+| <a name="default_ttl"></a> [default_ttl](#input\_default\_ttl) | The default amount of time (in seconds) that an object is in a CloudFront cache before CloudFront sends another request to the origin to determine whether the object has been updated. | `number` | `86400` | no |  |
+| <a name="min_ttl"></a> [min_ttl](#input\_min\_ttl) | The minimum amount of time, the objects to stay in CloudFront caches before CloudFront sends another request to the origin to see whether the object has been updated. | `number` | `1` | no |  |
+| <a name="max_ttl"></a> [max_ttl](#input\_max\_ttl) | The maximum amount of time (in seconds) that an object is in a CloudFront cache before CloudFront sends another request to the origin to determine whether the object has been updated. | `number` | `31536000` | no |  |
+| <a name="cookie_behavior"></a> [cookie_behavior](#input\_cookie\_behavior) | Determines whether any cookies in viewer requests are included in the cache key and automatically included in requests that CloudFront sends to the origin. | `string` | `"none"` | no |  |
+| <a name="cookies_items"></a> [cookies_items](#input\_cookies\_items) | Comma seperated List of Cookie names. | `string` | `""` | no |  |
+| <a name="header_behavior"></a> [header_behavior](#input\_header\_behavior) | Determines whether any HTTP headers are included in the cache key and automatically included in requests that CloudFront sends to the origin.  | `string` | `"none"` | no |  |
+| <a name="headers_items"></a> [headers_items](#input\_headers\_items) | Comma seperated List of header names. | `string` | `""` | no |  |
+| <a name="query_string_behavior"></a> [query_string_behavior](#input\_query\_string\_behavior) | Determines whether any URL query strings in viewer requests are included in the cache key and automatically included in requests that CloudFront sends to the origin. | `string` | `"none"` | no |  |
+| <a name="query_strings_items"></a> [query_strings_items](#input\_query\_strings\_items) | Comma seperated List of query strings. | `string` | `""` | no |  |
+| <a name="enable_accept_encoding_brotli"></a> [enable_accept_encoding_brotli](#input\_enable\_accept\_encoding\_brotli) | A flag that can affect whether the Accept-Encoding HTTP header is included in the cache key and included in requests that CloudFront sends to the origin. | `bool` | `true` | no |  |
+| <a name="enable_accept_encoding_gzip"></a> [enable_accept_encoding_gzip](#input\_enable\_accept\_encoding\_gzip) | A flag that can affect whether the Accept-Encoding HTTP header is included in the cache key and included in requests that CloudFront sends to the origin. | `bool` | `true` | no |  |
+
 ### Outputs
 
 | Name | Type | Description |
@@ -107,6 +161,8 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="public_key_id"></a> [public_key_id](#output\_public\_key\_id) | `string` | The identifier for the public key. |
 | <a name="public_key_etag"></a> [public_key_etag](#output\_public\_key\_etag) | `string` | The current version of the public key. |
 | <a name="monitoring_subscription_id"></a> [monitoring_subscription_id](#output\_monitoring\_subscription\_id) | `string` | The ID of the CloudFront monitoring subscription. |
+| <a name="origin_request_policies"></a> [origin_request_policies](#output\_origin\_request\_policies) | `map(string)` | Map of The Origin Request Policies where each entry will be a key-pair of Origin Request Policy Name and nested map of attributes (id and etag) for the policy. |
+| <a name="cache_policies"></a> [cache_policies](#output\_cache\_policies) | `map(string)` | Map of The Cache Policies where each entry will be a key-pair of Cache Policy Name and nested map of attributes (id and etag) for the policy. |
 
 ### Authors
 

@@ -191,3 +191,85 @@ EOF
     type = any
     default = []
 }
+
+variable "default_cache_behavior" {
+    description = <<EOF
+The default cache behaviour for the distribution:
+
+target_origin_id: (Required) The value of ID for the origin that CloudFront will use to route requests to, when a request matches the path pattern either for a cache behavior or for the default cache behavior.
+
+viewer_protocol_policy: (Required) The protocol that users can use to access the files in the origin.
+path_pattern: (Optional) The pattern (for example, images/*.jpg) that specifies which requests this cache behavior to apply to.
+
+allowed_methods: (Optional) The list of HTTP methods that CloudFront processes and forwards to origin.
+cached_methods: (Optional) The list of HTTP methods that CloudFront caches the response to requests for.
+
+compress: (Optional) Flag to decide if CloudFront compress the content automatically for web requests that include Accept-Encoding: gzip in the request header.
+
+default_ttl: (Optional) The default amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request in the absence of an Cache-Control max-age or Expires header.
+min_ttl: (Optional) The minimum amount of time, the objects to stay in CloudFront caches before CloudFront queries your origin to see whether the object has been updated.
+max_ttl: (Optional) The maximum amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request to your origin to determine whether the object has been updated.
+
+smooth_streaming: (Optional) Indicates whether you want to distribute media files in Microsoft Smooth Streaming format.
+trusted_signers: (Optional) List of AWS account IDs (or self) that you want to allow to create signed URLs for private content.
+trusted_key_groups: (Optional) List of nested attributes for active trusted key groups, if the distribution is set up to serve private content with signed URLs.
+
+origin_request_policy_name: (Optional) The name of the origin request policy that is attached to the behavior (as defined in `origin_request_policy`).
+cache_policy_name: (Optional) The name of the cache policy that is attached to the cache behavior (as defined in `cache_policy`).
+EOF
+    type = any
+}
+
+variable "ordered_cache_behaviors" {
+    description = "List of configuration map of Cache behaviours for the distribution where each entry will be of the same strcuture as `default_cache_behavior`"
+    type = any
+    default = []
+}
+
+variable "origin_request_policy" {
+    description = <<EOF
+List of Configuration Map (with the following properties) for Origin Request Policies to be provisioned.
+
+name: (Required) Unique name to identify the origin request policy.
+comments: (Optional) Comment to describe the origin request policy.
+
+cookie_behavior: (Optional) Determines whether any cookies in viewer requests are included in the origin request key and automatically included in requests that CloudFront sends to the origin.
+cookies_items: (Optional) Comma seperated List of Cookie names.
+
+header_behavior: (Optional) Determines whether any HTTP headers are included in the origin request key and automatically included in requests that CloudFront sends to the origin. 
+headers_items: (Optional) Comma seperated List of header names.
+
+query_string_behavior: (Optional) Determines whether any URL query strings in viewer requests are included in the origin request key and automatically included in requests that CloudFront sends to the origin.
+query_strings_items: (Optional) Comma seperated List of query strings.
+
+EOF
+    type    = any
+    default = []
+}
+
+variable "cache_policy" {
+    description = <<EOF
+List of Configuration Map (with the following properties) for Cache Policies to be provisioned.
+
+name: (Required) Unique name to identify the cache policy.
+comments: (Optional) Comment to describe the cache policy.
+
+default_ttl: (Optional) The default amount of time (in seconds) that an object is in a CloudFront cache before CloudFront sends another request to the origin to determine whether the object has been updated.
+min_ttl: (Optional) The minimum amount of time, the objects to stay in CloudFront caches before CloudFront sends another request to the origin to see whether the object has been updated.
+max_ttl: (Optional) The maximum amount of time (in seconds) that an object is in a CloudFront cache before CloudFront sends another request to the origin to determine whether the object has been updated.
+
+cookie_behavior: (Optional) Determines whether any cookies in viewer requests are included in the cache key and automatically included in requests that CloudFront sends to the origin.
+cookies_items: (Optional) Comma seperated List of Cookie names.
+
+header_behavior: (Optional) Determines whether any HTTP headers are included in the cache key and automatically included in requests that CloudFront sends to the origin. 
+headers_items: (Optional) Comma seperated List of header names.
+
+query_string_behavior: (Optional) Determines whether any URL query strings in viewer requests are included in the cache key and automatically included in requests that CloudFront sends to the origin.
+query_strings_items: (Optional) Comma seperated List of query strings.
+
+enable_accept_encoding_brotli: (Optional) A flag that can affect whether the Accept-Encoding HTTP header is included in the cache key and included in requests that CloudFront sends to the origin.
+enable_accept_encoding_gzip: (Optional) A flag that can affect whether the Accept-Encoding HTTP header is included in the cache key and included in requests that CloudFront sends to the origin.
+EOF
+    type    = any
+    default = []
+}

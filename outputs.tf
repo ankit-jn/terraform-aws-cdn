@@ -54,3 +54,24 @@ output "monitoring_subscription_id" {
     description = "The ID of the CloudFront monitoring subscription."
     value       = aws_cloudfront_monitoring_subscription.this.id
 }
+
+## Origin Request Policy
+output "origin_request_policies" {
+    description = "The Attributes for Origin Request Policies."
+    value       = { for key, policy in aws_cloudfront_origin_request_policy.this:
+                            key => {
+                                id = policy.id
+                                etag  = policy.etag
+                            }}
+}
+
+
+## Origin Request Policy
+output "cache_policies" {
+    description = "The Attributes for Cache Policies."
+    value       = { for key, policy in aws_cloudfront_cache_policy.this:
+                            key => {
+                                id = policy.id
+                                etag  = policy.etag
+                            }}
+}
