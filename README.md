@@ -11,6 +11,7 @@ This module features the following components to be provisioned:
 - Origin Access Identity [[aws_cloudfront_origin_access_identity](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_origin_access_identity)]
 - Cloudfront Public Key [[aws_cloudfront_public_key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_public_key)]
 - Additional Cloudwatch Monitoring for CDN [[aws_cloudfront_monitoring_subscription](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_monitoring_subscription)]
+- Cloudfront Function [[aws_cloudfront_function](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_function)]
 
 ### Requirements
 
@@ -179,7 +180,7 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="name"></a> [name](#input\_name) | Unique name for your CloudFront Function. | `string` |  | yes |  |
 | <a name="runtime"></a> [runtime](#input\_runtime) | Identifier of the function's runtime. | `string` |  | yes |  |
 | <a name="comment"></a> [comment](#input\_comment) | Comment | `string` |  | no |  |
-| <a name="publish"></a> [publish](#input\_publish) | Whether to publish creation/change as Live CloudFront Function Version. | `string` |  | no |  |
+| <a name="publish"></a> [publish](#input\_publish) | Whether to publish creation/change as Live CloudFront Function Version. | `string` | `true` | no |  |
 | <a name="code_file"></a> [code_file](#input\_code_file) | Source code File of the function (Path relative to root directory) | `string` |  | yes |  |
 
 ### Outputs
