@@ -92,10 +92,11 @@ resource aws_cloudfront_distribution "this" {
         max_ttl     = try(var.default_cache_behavior.max_ttl, 31536000) ## default 31536000 seconds (i.e.365 days)
         
         smooth_streaming = try(var.default_cache_behavior.smooth_streaming, true)
+        realtime_log_config_arn = try(var.default_cache_behavior.realtime_log_config_name, "") == "" ? null : realtime_log_config.this[var.default_cache_behavior.realtime_log_config_name].arn
+
         ## TO DO
         # field_level_encryption_id = null
-        # realtime_log_config_arn = null
-
+        
         trusted_signers     = try(var.default_cache_behavior.trusted_signers, null)
         trusted_key_groups  = try(var.default_cache_behavior.trusted_key_groups, null)
 
@@ -156,9 +157,10 @@ resource aws_cloudfront_distribution "this" {
             max_ttl     = try(cache_behavior.value.max_ttl, 31536000) ## default 31536000 seconds (i.e.365 days)
             
             smooth_streaming = try(cache_behavior.value.smooth_streaming, true)
+            realtime_log_config_arn = try(var.default_cache_behavior.realtime_log_config_name, "") == "" ? null : realtime_log_config.this[var.default_cache_behavior.realtime_log_config_name].arn
+
             ## TO DO
             # field_level_encryption_id = null
-            # realtime_log_config_arn = null
 
             trusted_signers     = try(cache_behavior.value.trusted_signers, null)
             trusted_key_groups  = try(cache_behavior.value.trusted_key_groups, null)

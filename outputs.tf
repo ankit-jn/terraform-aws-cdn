@@ -57,21 +57,36 @@ output "monitoring_subscription_id" {
 
 ## Origin Request Policy
 output "origin_request_policies" {
-    description = "The Attributes for Origin Request Policies."
-    value       = { for key, policy in aws_cloudfront_origin_request_policy.this:
-                            key => {
+    description = "The Map of attributes for Origin Request Policies."
+    value       = { for name, policy in aws_cloudfront_origin_request_policy.this:
+                            name => {
                                 id = policy.id
                                 etag  = policy.etag
                             }}
 }
 
 
-## Origin Request Policy
+## Cache Policy
 output "cache_policies" {
-    description = "The Attributes for Cache Policies."
-    value       = { for key, policy in aws_cloudfront_cache_policy.this:
-                            key => {
+    description = "The Map of attributes for Cache Policies."
+    value       = { for name, policy in aws_cloudfront_cache_policy.this:
+                            name => {
                                 id = policy.id
                                 etag  = policy.etag
                             }}
+}
+
+## Realtime Log COnfigurations
+output "realtime_log_configs" {
+    description = "The map of Attributes for Realtime Log Configurations."
+    value       = { for name, config in aws_cloudfront_realtime_log_config.this:
+                            name => {
+                                id = config.id
+                                etag  = config.arn
+                            }}
+}
+
+output "log_configuration_role" {
+    description = "The ARN of an IAM role that CloudFront can use to send real-time log data to the Kinesis data stream."
+    value       = var.create_realtime_logging_role ? aws_iam_role.this[0].arn : ""
 }

@@ -1,3 +1,6 @@
+##########################
+## Cloudfront Distribution
+##########################
 variable "enabled" {
     description = "Flag to decide if the distribution is enabled to accept end user requests for content."
     type        = bool
@@ -104,46 +107,16 @@ EOF
     default = {}
 }
 
-variable "tags" {
-  description = "(Optional) A map of tags to assign to the distribution."
-  type        = map(string)
-  default     = {}
-}
-
-variable "create_origin_access_identity" {
-    description = "Flag to decide if create an Amazon Cloudfront Origin Access Identity."
-    type        = bool
-    default     = false
-}
-
-variable "oai_comments" {
-    description = "An optional comment for the origin access identity."
-    type        = string
-    default     = null
-}
-
-variable "create_cloudfront_public_key" {
-    description = "Flag to decide if create CloudFront public key."
-    type        = bool
-    default     = false
-}
-
-variable "cloudfront_public_key" {
-    description = <<EOF
-Configuration map (with following key-pair) for Public Key.
-
-name: The name for the public key.
-file: The encoded public key file (with path relative to root) to add to CloudFront to use with features like field-level encryption.
-comments: An optional comment about the public key.
-EOF
-    type        = map(string)
-    default     = {}
-}
-
 variable "enable_additional_moniroting" {
     description = "Flag to decide if additional CloudWatch metrics are enabled for a CloudFront distribution."
     type        = bool
     default     = false
+}
+
+variable "tags" {
+  description = "(Optional) A map of tags to assign to the distribution."
+  type        = map(string)
+  default     = {}
 }
 
 ##########################
@@ -217,6 +190,7 @@ min_ttl: (Optional) The minimum amount of time, the objects to stay in CloudFron
 max_ttl: (Optional) The maximum amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request to your origin to determine whether the object has been updated.
 
 smooth_streaming: (Optional) Indicates whether you want to distribute media files in Microsoft Smooth Streaming format.
+realtime_log_config_name: (Optional) The name of the Realitime log configuration (as defined in `realtime_log_configs`)
 trusted_signers: (Optional) List of AWS account IDs (or self) that you want to allow to create signed URLs for private content.
 trusted_key_groups: (Optional) List of nested attributes for active trusted key groups, if the distribution is set up to serve private content with signed URLs.
 
@@ -247,6 +221,56 @@ EOF
 
 variable "ordered_cache_behaviors" {
     description = "List of configuration map of Cache behaviours for the distribution where each entry will be of the same strcuture as `default_cache_behavior`"
+    type = any
+    default = []
+}
+
+##########################
+## Viewer Certificate 
+##########################
+variable "cloudfront_default_certificate" {
+    description = "Flag to decide to use HTTPS to request your objects and you're using the CloudFront domain name for your distribution."
+    type        = bool
+    default     = true
+}
+
+variable "acm_certificate_arn" {
+    description = "The ARN of the ACM certificate in `us-east-1` region to use with this distribution."
+    type        = string
+    default     = null
+}
+
+variable "iam_certificate_id" {
+    description = "The IAM certificate identifier of the custom viewer certificate for this distribution if you are using a custom domain."
+    type        = string
+    default     = null   
+}
+
+variable "minimum_protocol_version" {
+    description = "The minimum version of the SSL protocol, CloudFront to use for HTTPS connections if `cloudfront_default_certificate` is set `false`."
+    type        = string
+    default     = "TLSv1"    
+}
+
+variable "ssl_support_method" {
+    description = "Specifies how you want CloudFront to serve HTTPS requests."
+    type        = string
+    default     = null
+}
+
+##########################
+## Cloudfront Functions
+##########################
+variable "cloudfront_functions" {
+    description = <<EOF
+List of Configurations Map for the cloudfront functions to be provisioned:
+name: (Required) Unique name for your CloudFront Function.
+runtime: (Required) Identifier of the function's runtime.
+comment: (Optional) Comment.
+publish: (Optional) Whether to publish creation/change as Live CloudFront Function Version.
+code_file: (Required) Source code File of the function (Path relative to root directory)
+EOF
+
     type = any
     default = []
 }
@@ -302,49 +326,64 @@ EOF
     default = []
 }
 
-##########################
-## Viewer Certificate 
-##########################
-variable "cloudfront_default_certificate" {
-    description = "Flag to decide to use HTTPS to request your objects and you're using the CloudFront domain name for your distribution."
+##############################
+## Realtime Logs Configuration
+##############################
+variable "realtime_log_configs" {
+    description = <<EOF
+List of Configuration Maps for CloudFront real-time log:
+name            : (Required) The unique name to identify this real-time log configuration.
+sampling_rate   : (Required) The sampling rate for this real-time log configuration.
+fields          : (Required) The fields that are included in each real-time log record.
+stream_arn      : (Required) The ARN of the Kinesis data stream where real-time log data is sent.
+role_arn        : (Optional) The ARN of an IAM role that CloudFront can use to send real-time log data to the Kinesis data stream.
+EOF
+}
+
+variable "create_realtime_logging_role" {
+    description = "Flag to decide if IAM role needs to be provisioned that CloudFront can use to send real-time log data to the Kinesis data streams."
     type        = bool
     default     = true
 }
 
-variable "acm_certificate_arn" {
-    description = "The ARN of the ACM certificate in `us-east-1` region to use with this distribution."
+variable "realtime_logging_role" {
+    description = "IAM Role Name to be provisioned that CloudFront can use to send real-time log data to the Kinesis data streams."
     type        = string
     default     = null
 }
 
-variable "iam_certificate_id" {
-    description = "The IAM certificate identifier of the custom viewer certificate for this distribution if you are using a custom domain."
-    type        = string
-    default     = null   
+##########################
+## Origin Access Identity
+##########################
+variable "create_origin_access_identity" {
+    description = "Flag to decide if create an Amazon Cloudfront Origin Access Identity."
+    type        = bool
+    default     = false
 }
 
-variable "minimum_protocol_version" {
-    description = "The minimum version of the SSL protocol, CloudFront to use for HTTPS connections if `cloudfront_default_certificate` is set `false`."
-    type        = string
-    default     = "TLSv1"    
-}
-
-variable "ssl_support_method" {
-    description = "Specifies how you want CloudFront to serve HTTPS requests."
+variable "oai_comments" {
+    description = "An optional comment for the origin access identity."
     type        = string
     default     = null
 }
 
-variable "cloudfront_functions" {
+##########################
+## Public Key
+##########################
+variable "create_cloudfront_public_key" {
+    description = "Flag to decide if create CloudFront public key."
+    type        = bool
+    default     = false
+}
+
+variable "cloudfront_public_key" {
     description = <<EOF
-List of Configurations Map for the cloudfront functions to be provisioned:
-name: (Required) Unique name for your CloudFront Function.
-runtime: (Required) Identifier of the function's runtime.
-comment: (Optional) Comment.
-publish: (Optional) Whether to publish creation/change as Live CloudFront Function Version.
-code_file: (Required) Source code File of the function (Path relative to root directory)
-EOF
+Configuration map (with following key-pair) for Public Key.
 
-    type = any
-    default = []
+name: The name for the public key.
+file: The encoded public key file (with path relative to root) to add to CloudFront to use with features like field-level encryption.
+comments: An optional comment about the public key.
+EOF
+    type        = map(string)
+    default     = {}
 }

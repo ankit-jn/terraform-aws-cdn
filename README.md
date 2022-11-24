@@ -12,6 +12,7 @@ This module features the following components to be provisioned:
 - Cloudfront Public Key [[aws_cloudfront_public_key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_public_key)]
 - Additional Cloudwatch Monitoring for CDN [[aws_cloudfront_monitoring_subscription](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_monitoring_subscription)]
 - Cloudfront Function [[aws_cloudfront_function](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_function)]
+- Cloudfront Realtime Log Configuration [[aws_cloudfront_realtime_log_config](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_realtime_log_config)]
 
 ### Requirements
 
@@ -33,6 +34,8 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 ### Inputs
 ---
 
+##### Cloudfront Distribution
+
 | Name | Description | Type | Default | Required | Example|
 |:------|:------|:------|:------|:------:|:------|
 | <a name="enabled"></a> [enabled](#input\_enabled) | Flag to decide if the distribution is enabled to accept end user requests for content. | `bool` | `true` | no |  |
@@ -48,24 +51,69 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="error_responses"></a> [error_responses](#input\_error\_responses) | List of Map with following key/pairs, for custom Error responses to be configured on CDN. | `list(map(string))` | `[]` | no |  |
 | <a name="logging"></a> [logging](#input\_logging) | Configuration map (with following key-pair) of how logs are written to your distribution. | `map(string)` | `{}` | no |  |
 | <a name="geo_restrictions"></a> [geo_restrictions](#input\_geo\_restrictions) | Configuration map for geo restrictrions | `any` | `{}` | no |  |
-| <a name="tags"></a> [tags](#input\_tags) | A map of tags to assign to the distribution. | `map(string)` | `{}` | no |  |
-| <a name="create_origin_access_identity"></a> [create_origin_access_identity](#input\_create\_origin\_access\_identity) | Flag to decide if create an Amazon Cloudfront Origin Access Identity. | `bool` | `false` | no |  |
-| <a name="oai_comments"></a> [oai_comments](#input\_oai\_comments) | An optional comment for the origin access identity. | `string` | `null` | no |  |
-| <a name="create_cloudfront_public_key"></a> [create_cloudfront_public_key](#input\_create\_cloudfront\_public\_key) | Flag to decide if create CloudFront public key. | `bool` | `false` | no |  |
-| <a name="cloudfront_public_key"></a> [cloudfront_public_key](#input\_cloudfront\_public\_key) | Configuration map (with following key-pair) for Public Key. | `map(string)` | `{}` | no |  |
 | <a name="enable_additional_moniroting"></a> [enable_additional_moniroting](#input\_enable\_additional\_moniroting) | Flag to decide if additional CloudWatch metrics are enabled for a CloudFront distribution. | `bool` | `false` | no |  |
+| <a name="tags"></a> [tags](#input\_tags) | A map of tags to assign to the distribution. | `map(string)` | `{}` | no |  |
+
+##### Origins
+
+| Name | Description | Type | Default | Required | Example|
+|:------|:------|:------|:------|:------:|:------|
 | <a name="origins"></a> [origins](#origins) | List of Cloudfront Distribution's Origins Configiration Map. | `any` |  | yes |  |
 | <a name="origin_groups"></a> [origin_groups](#origin\_groups) | List of Origin Groups Map. | `any` | `[]` | no |  |
+
+
+##### Cache Behaviors
+
+| Name | Description | Type | Default | Required | Example|
+|:------|:------|:------|:------|:------:|:------|
 | <a name="default_cache_behavior"></a> [default_cache_behavior](#cache\_behavior) | The default cache behaviour for the distribution. | `any` |  | yes |  |
 | <a name="ordered_cache_behaviors"></a> [ordered_cache_behaviors](#cache\_behavior) | The List of configuration map of Cache behaviours for the distribution. | `any` | `[]` | no |  |
+
+##### Viewer Certificate
+
+| Name | Description | Type | Default | Required |
+|:------|:------|:------|:------|:------:|
+| <a name="cloudfront_default_certificate"></a> [cloudfront_default_certificate](#input\_cloudfront\_default\_certificate) | Flag to decide to use HTTPS to request your objects and you're using the CloudFront domain name for your distribution. | `bool` | `true` | no |
+| <a name="acm_certificate_arn"></a> [acm_certificate_arn](#input\_acm\_certificate\_arn) | The ARN of the ACM certificate in `us-east-1` region to use with this distribution. | `string` | `null` | no |
+| <a name="iam_certificate_id"></a> [iam_certificate_id](#input\_iam\_certificate\_id) | The IAM certificate identifier of the custom viewer certificate for this distribution if you are using a custom domain. | `string` | `null` | no |
+| <a name="minimum_protocol_version"></a> [minimum_protocol_version](#input\_minimum\_protocol\_version) | The minimum version of the SSL protocol, CloudFront to use for HTTPS connections if `cloudfront_default_certificate` is set `false`. | `string` | `"TLSv1"` | no |
+| <a name="ssl_support_method"></a> [ssl_support_method](#input\_ssl\_support\_method) | Specifies how you want CloudFront to serve HTTPS requests. | `string` | `null` | no |
+
+##### Functions
+
+| Name | Description | Type | Default | Required | Example|
+|:------|:------|:------|:------|:------:|:------|
+| <a name="cloudfront_functions"></a> [cloudfront_functions](#cloudfront\_functions) | List of Configurations Map for the cloudfront functions to be provisioned | `map(string)` | `[]` | no |  |
+
+##### Policy
+
+| Name | Description | Type | Default | Required | Example|
+|:------|:------|:------|:------|:------:|:------|
 | <a name="origin_request_policy"></a> [origin_request_policy](#origin\_request\_policy) | List of Configuration Map for Origin Request Policies to be provisioned. | `any` | `[]` | no |  |
 | <a name="cache_policy"></a> [cache_policy](#cache_policy) | List of Configuration Map for Cache Policies to be provisioned. | `any` | `[]` | no |  |
-| <a name="cloudfront_default_certificate"></a> [cloudfront_default_certificate](#input\_cloudfront\_default\_certificate) | Flag to decide to use HTTPS to request your objects and you're using the CloudFront domain name for your distribution. | `bool` | `true` | no |  |
-| <a name="acm_certificate_arn"></a> [acm_certificate_arn](#input\_acm\_certificate\_arn) | The ARN of the ACM certificate in `us-east-1` region to use with this distribution. | `string` | `null` | no |  |
-| <a name="iam_certificate_id"></a> [iam_certificate_id](#input\_iam\_certificate\_id) | The IAM certificate identifier of the custom viewer certificate for this distribution if you are using a custom domain. | `string` | `null` | no |  |
-| <a name="minimum_protocol_version"></a> [minimum_protocol_version](#input\_minimum\_protocol\_version) | The minimum version of the SSL protocol, CloudFront to use for HTTPS connections if `cloudfront_default_certificate` is set `false`. | `string` | `"TLSv1"` | no |  |
-| <a name="ssl_support_method"></a> [ssl_support_method](#input\_ssl\_support\_method) | Specifies how you want CloudFront to serve HTTPS requests. | `string` | `null` | no |  |
-| <a name="cloudfront_functions"></a> [cloudfront_functions](#cloudfront\_functions) | List of Configurations Map for the cloudfront functions to be provisioned | `map(string)` | `[]` | no |  |
+
+##### Realtime Logs Configuration
+
+| Name | Description | Type | Default | Required | Example|
+|:------|:------|:------|:------|:------:|:------|
+| <a name="realtime_log_configs"></a> [realtime_log_configs](#realtime\_log\_configs) | List of Configuration Maps for CloudFront real-time log | `any` | `[]` | no |  |
+| <a name="create_realtime_logging_role"></a> [create_realtime_logging_role](#input\_create\_realtime\_logging\_role) | Flag to decide if IAM role needs to be provisioned that CloudFront can use to send real-time log data to the Kinesis data streams. | `bool` | `true` | no |  |
+| <a name="realtime_logging_role"></a> [realtime_logging_role](#input\_realtime\_logging\_role) | IAM Role Name to be provisioned that CloudFront can use to send real-time log data to the Kinesis data streams. | `string` | `null` | no |  |
+
+##### Cloudfront Origin Access Identity
+
+| Name | Description | Type | Default | Required |
+|:------|:------|:------|:------|:------:|
+| <a name="create_origin_access_identity"></a> [create_origin_access_identity](#input\_create\_origin\_access\_identity) | Flag to decide if create an Amazon Cloudfront Origin Access Identity. | `bool` | `false` | no |
+| <a name="oai_comments"></a> [oai_comments](#input\_oai\_comments) | An optional comment for the origin access identity. | `string` | `null` | no |
+
+##### Cloudfront Public Key
+
+| Name | Description | Type | Default | Required | Example|
+|:------|:------|:------|:------|:------:|:------|
+| <a name="create_cloudfront_public_key"></a> [create_cloudfront_public_key](#input\_create\_cloudfront\_public\_key) | Flag to decide if create CloudFront public key. | `bool` | `false` | no |  |
+| <a name="cloudfront_public_key"></a> [cloudfront_public_key](#input\_cloudfront\_public\_key) | Configuration map (with following key-pair) for Public Key. | `map(string)` | `{}` | no |  |
+
 
 ### Nested Configuration Maps:  
 
@@ -119,6 +167,7 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="min_ttl"></a> [min_ttl](#input\_min\_ttl) | The minimum amount of time, the objects to stay in CloudFront caches before CloudFront queries your origin to see whether the object has been updated. | `number` | `0` | no |  |
 | <a name="max_ttl"></a> [max_ttl](#input\_max\_ttl) | The maximum amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request to your origin to determine whether the object has been updated. | `number` | `31536000` | no |  |
 | <a name="smooth_streaming"></a> [smooth_streaming](#input\_smooth\_streaming) | Indicates whether you want to distribute media files in Microsoft Smooth Streaming format. | `bool` | `true` | no |  |
+| <a name="realtime_log_config_name"></a> [realtime_log_config_name](#input\_realtime\_log\_config\_name) | The name of the Realitime log configuration (as defined in `realtime_log_configs`) | `string` | `null` | no |  |
 | <a name="trusted_signers"></a> [trusted_signers](#input\_trusted\_signers) | List of AWS account IDs (or self) that you want to allow to create signed URLs for private content. | `list(string)` | `null` | no |  |
 | <a name="trusted_key_groups"></a> [trusted_key_groups](#input\_trusted\_key\_groups) | List of nested attributes for active trusted key groups, if the distribution is set up to serve private content with signed URLs. | `any` | `null` | no |  |
 | <a name="origin_request_policy_name"></a> [origin_request_policy_name](#input\_origin\_request\_policy\_name) | The name of the origin request policy that is attached to the behavior (as defined in `origin_request_policy`). | `string` | `null` | no |  |
@@ -168,10 +217,10 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 - Map Key: Event Name [`viewer-request`, `origin-request`, `viewer-response`, `origin-response`]
 - Map Value: Nested Map as follows:
 
-| Name | Description | Type | Default | Required | Example |
-|:------|:------|:------|:------|:------:|:------|
-| <a name="arn"></a> [arn](#input\_arn) | ARN of the Lambda function. | `string` |  | yes |  |
-| <a name="include_body"></a> [include_body](#input\_include\_body) | When set to true it exposes the request body to the lambda function. | `bool` | `false` | no |  |
+| Name | Description | Type | Default | Required |
+|:------|:------|:------|:------|:------:|
+| <a name="arn"></a> [arn](#input\_arn) | ARN of the Lambda function. | `string` |  | yes |
+| <a name="include_body"></a> [include_body](#input\_include\_body) | When set to true it exposes the request body to the lambda function. | `bool` | `false` | no |
 
 #### cloudfront_functions
 
@@ -182,6 +231,16 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="comment"></a> [comment](#input\_comment) | Comment | `string` |  | no |  |
 | <a name="publish"></a> [publish](#input\_publish) | Whether to publish creation/change as Live CloudFront Function Version. | `string` | `true` | no |  |
 | <a name="code_file"></a> [code_file](#input\_code_file) | Source code File of the function (Path relative to root directory) | `string` |  | yes |  |
+
+#### realtime_log_configs
+
+| Name | Description | Type | Default | Required | Example |
+|:------|:------|:------|:------|:------:|:------|
+| <a name="name"></a> [name](#input\_name) | The unique name to identify this real-time log configuration. | `string` |  | yes |  |
+| <a name="sampling_rate"></a> [sampling_rate](#input\_sampling\_rate) | The sampling rate for this real-time log configuration. | `number` |  | yes |  |
+| <a name="fields"></a> [fields](#input\_fields) |  The fields that are included in each real-time log record. | `list(string)` |  | yes |  |
+| <a name="stream_arn"></a> [stream_arn](#input\_stream\_arn) | The ARN of the Kinesis data stream where real-time log data is sent. | `string` |  | yes |  |
+| <a name="role_arn"></a> [role_arn](#input\_role\_arn) | The ARN of an IAM role that CloudFront can use to send real-time log data to the Kinesis data stream. | `string` | `null` | no |  |
 
 ### Outputs
 
@@ -200,6 +259,8 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="monitoring_subscription_id"></a> [monitoring_subscription_id](#output\_monitoring\_subscription\_id) | `string` | The ID of the CloudFront monitoring subscription. |
 | <a name="origin_request_policies"></a> [origin_request_policies](#output\_origin\_request\_policies) | `map(map(string))` | Map of The Origin Request Policies where each entry will be a key-pair of Origin Request Policy Name and nested map of attributes (id and etag) for the policy. |
 | <a name="cache_policies"></a> [cache_policies](#output\_cache\_policies) | `map(map(string))` | Map of The Cache Policies where each entry will be a key-pair of Cache Policy Name and nested map of attributes (id and etag) for the policy. |
+| <a name="realtime_log_configs"></a> [realtime_log_configs](#output\_realtime\_log\_configs) | `map(map(string))` | Map of The Realtime Log COnfigurations where each entry will be a key-pair of Log Configuration Name and nested map of attributes (id and arn) for the configuration. |
+| <a name="log_configuration_role"></a> [log_configuration_role](#output\_log\_configuration\_role) | `string` | The ARN of an IAM role that CloudFront can use to send real-time log data to the Kinesis data stream. |
 
 ### Authors
 
