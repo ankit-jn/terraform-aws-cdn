@@ -145,8 +145,13 @@ resource aws_cloudfront_distribution "this" {
         }
     }
 
-    ## TO DO
-    # viewer_certificate {}
+    viewer_certificate {
+        cloudfront_default_certificate = var.cloudfront_default_certificate
+        acm_certificate_arn = var.cloudfront_default_certificate ? null : var.acm_certificate_arn
+        iam_certificate_id = var.cloudfront_default_certificate ? null : var.iam_certificate_id
+        minimum_protocol_version = var.minimum_protocol_version
+        ssl_support_method = try(var.ssl_support_method, null)
+    }
     
     is_ipv6_enabled = var.ipv6_enabled
     http_version = var.http_version

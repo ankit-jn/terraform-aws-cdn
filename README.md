@@ -59,6 +59,11 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="ordered_cache_behaviors"></a> [ordered_cache_behaviors](#cache\_behavior) | The List of configuration map of Cache behaviours for the distribution. | `any` | `[]` | no |  |
 | <a name="origin_request_policy"></a> [origin_request_policy](#origin\_request\_policy) | List of Configuration Map for Origin Request Policies to be provisioned. | `any` | `[]` | no |  |
 | <a name="cache_policy"></a> [cache_policy](#cache_policy) | List of Configuration Map for Cache Policies to be provisioned. | `any` | `[]` | no |  |
+| <a name="cloudfront_default_certificate"></a> [cloudfront_default_certificate](#input\_cloudfront\_default\_certificate) | Flag to decide to use HTTPS to request your objects and you're using the CloudFront domain name for your distribution. | `bool` | `true` | no |  |
+| <a name="acm_certificate_arn"></a> [acm_certificate_arn](#input\_acm\_certificate\_arn) | The ARN of the ACM certificate in `us-east-1` region to use with this distribution. | `string` | `null` | no |  |
+| <a name="iam_certificate_id"></a> [iam_certificate_id](#input\_iam\_certificate\_id) | The IAM certificate identifier of the custom viewer certificate for this distribution if you are using a custom domain. | `string` | `null` | no |  |
+| <a name="minimum_protocol_version"></a> [minimum_protocol_version](#input\_minimum\_protocol\_version) | The minimum version of the SSL protocol, CloudFront to use for HTTPS connections if `cloudfront_default_certificate` is set `false`. | `string` | `"TLSv1"` | no |  |
+| <a name="ssl_support_method"></a> [ssl_support_method](#input\_ssl\_support\_method) | Specifies how you want CloudFront to serve HTTPS requests. | `string` | `null` | no |  |
 
 ### Nested Configuration Maps:  
 

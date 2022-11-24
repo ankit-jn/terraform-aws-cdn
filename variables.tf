@@ -273,3 +273,33 @@ EOF
     type    = any
     default = []
 }
+
+variable "cloudfront_default_certificate" {
+    description = "Flag to decide to use HTTPS to request your objects and you're using the CloudFront domain name for your distribution."
+    type        = bool
+    default     = true
+}
+
+variable "acm_certificate_arn" {
+    description = "The ARN of the ACM certificate in `us-east-1` region to use with this distribution."
+    type        = string
+    default     = null
+}
+
+variable "iam_certificate_id" {
+    description = "The IAM certificate identifier of the custom viewer certificate for this distribution if you are using a custom domain."
+    type        = string
+    default     = null   
+}
+
+variable "minimum_protocol_version" {
+    description = "The minimum version of the SSL protocol, CloudFront to use for HTTPS connections if `cloudfront_default_certificate` is set `false`."
+    type        = string
+    default     = "TLSv1"    
+}
+
+variable "ssl_support_method" {
+    description = "Specifies how you want CloudFront to serve HTTPS requests."
+    type        = string
+    default     = null
+}
