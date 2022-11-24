@@ -121,6 +121,11 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="trusted_key_groups"></a> [trusted_key_groups](#input\_trusted\_key\_groups) | List of nested attributes for active trusted key groups, if the distribution is set up to serve private content with signed URLs. | `any` | `null` | no |  |
 | <a name="origin_request_policy_name"></a> [origin_request_policy_name](#input\_origin\_request\_policy\_name) | The name of the origin request policy that is attached to the behavior (as defined in `origin_request_policy`). | `string` | `null` | no |  |
 | <a name="cache_policy_name"></a> [cache_policy_name](#input\_cache\_policy\_name) | The name of the cache policy that is attached to the cache behavior (as defined in `cache_policy`). | `string` | `null` | no |  |
+| <a name="forward_cookie_behavior"></a> [forward_cookie_behavior](#input\_forward\_cookie\_behavior) | Determines if CloudFront forward cookies to the origin. | `string` | `null` | no |  |
+| <a name="forward_cookies_items"></a> [forward_cookies_items](#input\_forward\_cookies\_items) | Comma seperated List of Cookie names that CloudFront forward to your origin. | `string` | `null` | no |  |
+| <a name="forward_headers"></a> [forward_headers](#input\_forward\_headers) | Comma seperated List of Header names that CloudFront forward to your origin. | `string` | `null` | no |  |
+| <a name="forward_query_strings"></a> [forward_query_strings](#input\_forward\_query\_strings) | Flag to decide if CloudFront forward Query string to the origin. | `bool` | `null` | no |  |
+| <a name="forward_query_strings_cache_keys"></a> [forward_query_strings_cache_keys](#input\_forward\_query\_strings\_cache\_keys) | Comma seperated List of Query strings which will be cahced. | `string` | `null` | no |  |
 
 #### origin_request_policy
 

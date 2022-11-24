@@ -102,8 +102,21 @@ resource aws_cloudfront_distribution "this" {
         cache_policy_id = can(var.default_cache_behavior.cache_policy_name) ? aws_cloudfront_cache_policy.this[var.default_cache_behavior.cache_policy_name].id : null
         origin_request_policy_id = can(var.default_cache_behavior.origin_request_policy_name) ? aws_cloudfront_origin_request_policy.this[var.default_cache_behavior.origin_request_policy_name].id : null
 
+        dynamic "forwarded_values" {
+            for_each = ((try(cache_behavior.value.forward_cookie_behavior, "") != "") 
+                                && (try(cache_behavior.value.forward_query_strings, null) != null)) ? [1] : []
+            
+            content {
+                cookies {
+                    forward = cache_behavior.value.forward_cookie_behavior
+                    whitelisted_names = contains(["all", "none"], lookup(cache_behavior.value, "forward_cookie_behavior", "none")) ? null : split(",", lookup(each.value, "forward_cookies_items", ""))
+                }
+                headers = try(cache_behavior.value.forward_headers, null)
+                query_string = cache_behavior.value.forward_query_strings
+                query_string_cache_keys = cache_behavior.value.forward_query_strings ? split(",", lookup(each.value, "forward_query_strings_cache_keys", "")) : null
+            }
+        }
         ## TO DO
-        # forwarded_values {}
         # lambda_function_association {}
         # function_association {}
     }
@@ -138,8 +151,22 @@ resource aws_cloudfront_distribution "this" {
             cache_policy_id = can(cache_behavior.value.cache_policy_name) ? aws_cloudfront_cache_policy.this[cache_behavior.value.cache_policy_name].id : null
             origin_request_policy_id = can(cache_behavior.value.origin_request_policy_name) ? aws_cloudfront_origin_request_policy.this[cache_behavior.value.origin_request_policy_name].id : null
 
+            dynamic "forwarded_values" {
+                for_each = ((try(cache_behavior.value.forward_cookie_behavior, "") != "") 
+                                    && (try(cache_behavior.value.forward_query_strings, null) != null)) ? [1] : []
+                
+                content {
+                    cookies {
+                        forward = cache_behavior.value.forward_cookie_behavior
+                        whitelisted_names = contains(["all", "none"], lookup(cache_behavior.value, "forward_cookie_behavior", "none")) ? null : split(",", lookup(each.value, "forward_cookies_items", ""))
+                    }
+                    headers = try(cache_behavior.value.forward_headers, null)
+                    query_string = cache_behavior.value.forward_query_strings
+                    query_string_cache_keys = cache_behavior.value.forward_query_strings ? split(",", lookup(each.value, "forward_query_strings_cache_keys", "")) : null
+                }
+            }
+            
             ## TO DO
-            # forwarded_values {}
             # lambda_function_association {}
             # function_association {}
         }

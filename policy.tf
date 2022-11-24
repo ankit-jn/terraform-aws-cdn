@@ -11,12 +11,12 @@ resource aws_cloudfront_origin_request_policy "this" {
     
     headers_config {
         header_behavior = lookup(each.value, "header_behavior", "none") 
-        cookies = (lookup(each.value, "header_behavior", "none") == "none") ? null : split(",", lookup(each.value, "headers_items", ""))
+        headers = (lookup(each.value, "header_behavior", "none") == "none") ? null : split(",", lookup(each.value, "headers_items", ""))
     }
 
     query_strings_config {
         header_behavior = lookup(each.value, "query_string_behavior", "none") 
-        cookies = (lookup(each.value, "query_string_behavior", "none") == "none") ? null : split(",", lookup(each.value, "query_strings_items", ""))
+        query_strings = (lookup(each.value, "query_string_behavior", "none") == "none") ? null : split(",", lookup(each.value, "query_strings_items", ""))
     }
 }
 

@@ -146,6 +146,9 @@ variable "enable_additional_moniroting" {
     default     = false
 }
 
+##########################
+## Origins
+##########################
 variable "origins" {
     description = <<EOF
 List of Cloudfront Distribution's Origins Configiration Map with following key-pairs
@@ -192,6 +195,9 @@ EOF
     default = []
 }
 
+##########################
+## Cache Behaviors
+##########################
 variable "default_cache_behavior" {
     description = <<EOF
 The default cache behaviour for the distribution:
@@ -216,6 +222,14 @@ trusted_key_groups: (Optional) List of nested attributes for active trusted key 
 
 origin_request_policy_name: (Optional) The name of the origin request policy that is attached to the behavior (as defined in `origin_request_policy`).
 cache_policy_name: (Optional) The name of the cache policy that is attached to the cache behavior (as defined in `cache_policy`).
+
+## forwarded_values properties
+
+forward_cookie_behavior: (Optional) Determines if CloudFront forward cookies to the origin.
+forward_cookies_items: (Optional) Comma seperated List of Cookie names that CloudFront forward to your origin.
+forward_headers: (Optional) Comma seperated List of Header names that CloudFront forward to your origin.
+forward_query_strings: (Optional) Flag to decide if CloudFront forward Query string to the origin.
+forward_query_strings_cache_keys: (Optional) Comma seperated List of Query strings which will be cahced.
 EOF
     type = any
 }
@@ -226,6 +240,9 @@ variable "ordered_cache_behaviors" {
     default = []
 }
 
+##########################
+## Policies
+##########################
 variable "origin_request_policy" {
     description = <<EOF
 List of Configuration Map (with the following properties) for Origin Request Policies to be provisioned.
@@ -274,6 +291,9 @@ EOF
     default = []
 }
 
+##########################
+## Viewer Certificate 
+##########################
 variable "cloudfront_default_certificate" {
     description = "Flag to decide to use HTTPS to request your objects and you're using the CloudFront domain name for your distribution."
     type        = bool
