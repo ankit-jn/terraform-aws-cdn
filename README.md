@@ -64,6 +64,7 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="iam_certificate_id"></a> [iam_certificate_id](#input\_iam\_certificate\_id) | The IAM certificate identifier of the custom viewer certificate for this distribution if you are using a custom domain. | `string` | `null` | no |  |
 | <a name="minimum_protocol_version"></a> [minimum_protocol_version](#input\_minimum\_protocol\_version) | The minimum version of the SSL protocol, CloudFront to use for HTTPS connections if `cloudfront_default_certificate` is set `false`. | `string` | `"TLSv1"` | no |  |
 | <a name="ssl_support_method"></a> [ssl_support_method](#input\_ssl\_support\_method) | Specifies how you want CloudFront to serve HTTPS requests. | `string` | `null` | no |  |
+| <a name="cloudfront_functions"></a> [cloudfront_functions](#cloudfront\_functions) | List of Configurations Map for the cloudfront functions to be provisioned | `map(string)` | `[]` | no |  |
 
 ### Nested Configuration Maps:  
 
@@ -121,11 +122,14 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="trusted_key_groups"></a> [trusted_key_groups](#input\_trusted\_key\_groups) | List of nested attributes for active trusted key groups, if the distribution is set up to serve private content with signed URLs. | `any` | `null` | no |  |
 | <a name="origin_request_policy_name"></a> [origin_request_policy_name](#input\_origin\_request\_policy\_name) | The name of the origin request policy that is attached to the behavior (as defined in `origin_request_policy`). | `string` | `null` | no |  |
 | <a name="cache_policy_name"></a> [cache_policy_name](#input\_cache\_policy\_name) | The name of the cache policy that is attached to the cache behavior (as defined in `cache_policy`). | `string` | `null` | no |  |
-| <a name="forward_cookie_behavior"></a> [forward_cookie_behavior](#input\_forward\_cookie\_behavior) | Determines if CloudFront forward cookies to the origin. | `string` | `null` | no |  |
-| <a name="forward_cookies_items"></a> [forward_cookies_items](#input\_forward\_cookies\_items) | Comma seperated List of Cookie names that CloudFront forward to your origin. | `string` | `null` | no |  |
-| <a name="forward_headers"></a> [forward_headers](#input\_forward\_headers) | Comma seperated List of Header names that CloudFront forward to your origin. | `string` | `null` | no |  |
-| <a name="forward_query_strings"></a> [forward_query_strings](#input\_forward\_query\_strings) | Flag to decide if CloudFront forward Query string to the origin. | `bool` | `null` | no |  |
-| <a name="forward_query_strings_cache_keys"></a> [forward_query_strings_cache_keys](#input\_forward\_query\_strings\_cache\_keys) | Comma seperated List of Query strings which will be cahced. | `string` | `null` | no |  |
+| <a name="handle_forwarding"></a> [handle_forwarding](#input\_handle\_forwarding) | Flag to decide if thoe configuration should be done how the Cloudfront should handle the query strings, cookies and headers. | `bool` | `false` | no |  |
+| <a name="cookie_behavior"></a> [cookie_behavior](#input\_cookie\_behavior) | Determines if CloudFront forward cookies to the origin. | `string` | `null` | no |  |
+| <a name="cookies_items"></a> [cookies_items](#input\_cookies\_items) | Comma seperated List of Cookie names that CloudFront forward to your origin. | `string` | `null` | no |  |
+| <a name="headers"></a> [headers](#input\_headers) | Comma seperated List of Header names that CloudFront forward to your origin. | `string` | `null` | no |  |
+| <a name="query_strings"></a> [query_strings](#input\_query\_strings) | Flag to decide if CloudFront forward Query string to the origin. | `bool` | `null` | no |  |
+| <a name="query_strings_cache_keys"></a> [query_strings_cache_keys](#input\_query\_strings\_cache\_keys) | Comma seperated List of Query strings which will be cahced. | `string` | `null` | no |  |
+| <a name="edge_lambda_functions"></a> [edge_lambda_functions](#edge\_lambda\_functions) | Map of Lambda functions that Cloudfront can trigger on a predefined event. | `any` | `{}` | no |  |
+| <a name="cloudfront_functions"></a> [cloudfront_functions](#input\_cloudfront\_functions) | Map of Cloudfront Functions:<br>&nbsp;&nbsp;&nbsp;<b>Map-Key:</b> Event Name (`viewer-request` or `viewer-response`)<br>&nbsp;&nbsp;&nbsp;<b>Map-Value:</b> Cloudfront function name as defined in `cloudfront_functions` | `map(string)` | `{}` | no |  |
 
 #### origin_request_policy
 
@@ -157,6 +161,26 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="query_strings_items"></a> [query_strings_items](#input\_query\_strings\_items) | Comma seperated List of query strings. | `string` | `""` | no |  |
 | <a name="enable_accept_encoding_brotli"></a> [enable_accept_encoding_brotli](#input\_enable\_accept\_encoding\_brotli) | A flag that can affect whether the Accept-Encoding HTTP header is included in the cache key and included in requests that CloudFront sends to the origin. | `bool` | `true` | no |  |
 | <a name="enable_accept_encoding_gzip"></a> [enable_accept_encoding_gzip](#input\_enable\_accept\_encoding\_gzip) | A flag that can affect whether the Accept-Encoding HTTP header is included in the cache key and included in requests that CloudFront sends to the origin. | `bool` | `true` | no |  |
+
+#### edge_lambda_functions
+
+- Map Key: Event Name [`viewer-request`, `origin-request`, `viewer-response`, `origin-response`]
+- Map Value: Nested Map as follows:
+
+| Name | Description | Type | Default | Required | Example |
+|:------|:------|:------|:------|:------:|:------|
+| <a name="arn"></a> [arn](#input\_arn) | ARN of the Lambda function. | `string` |  | yes |  |
+| <a name="include_body"></a> [include_body](#input\_include\_body) | When set to true it exposes the request body to the lambda function. | `bool` | `false` | no |  |
+
+#### cloudfront_functions
+
+| Name | Description | Type | Default | Required | Example |
+|:------|:------|:------|:------|:------:|:------|
+| <a name="name"></a> [name](#input\_name) | Unique name for your CloudFront Function. | `string` |  | yes |  |
+| <a name="runtime"></a> [runtime](#input\_runtime) | Identifier of the function's runtime. | `string` |  | yes |  |
+| <a name="comment"></a> [comment](#input\_comment) | Comment | `string` |  | no |  |
+| <a name="publish"></a> [publish](#input\_publish) | Whether to publish creation/change as Live CloudFront Function Version. | `string` |  | no |  |
+| <a name="code_file"></a> [code_file](#input\_code_file) | Source code File of the function (Path relative to root directory) | `string` |  | yes |  |
 
 ### Outputs
 

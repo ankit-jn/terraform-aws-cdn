@@ -224,12 +224,23 @@ origin_request_policy_name: (Optional) The name of the origin request policy tha
 cache_policy_name: (Optional) The name of the cache policy that is attached to the cache behavior (as defined in `cache_policy`).
 
 ## forwarded_values properties
+handle_forwarding: (Optional) Flag to decide if thoe configuration should be done how the Cloudfront should handle the query strings, cookies and headers.
+cookie_behavior: (Optional) Determines if CloudFront forward cookies to the origin.
+cookies_items: (Optional) Comma seperated List of Cookie names that CloudFront forward to your origin.
+headers: (Optional) Comma seperated List of Header names that CloudFront forward to your origin.
+query_strings: (Optional) Flag to decide if CloudFront forward Query string to the origin.
+query_strings_cache_keys: (Optional) Comma seperated List of Query strings which will be cahced.
 
-forward_cookie_behavior: (Optional) Determines if CloudFront forward cookies to the origin.
-forward_cookies_items: (Optional) Comma seperated List of Cookie names that CloudFront forward to your origin.
-forward_headers: (Optional) Comma seperated List of Header names that CloudFront forward to your origin.
-forward_query_strings: (Optional) Flag to decide if CloudFront forward Query string to the origin.
-forward_query_strings_cache_keys: (Optional) Comma seperated List of Query strings which will be cahced.
+edge_lambda_functions: (Optional) Map of Lambda functions that Cloudfront can trigger on a predefined event.
+    Map-key: Event Name (`viewer-request`, `origin-request`, `viewer-response`, `origin-response`)
+    Map-Value: Nested map with Lambda function configuration:
+        arn: ARN of the Lambda function.
+        include_body: (Optional) When set to true it exposes the request body to the lambda function.
+
+cloudfront_functions: (Optional) Map of Cloudfront Functions
+    Map Key - Event Name (`viewer-request`, `viewer-response`)
+    Map vaue - Cloudfront function name as defined in `cloudfront_functions`
+    
 EOF
     type = any
 }
@@ -322,4 +333,18 @@ variable "ssl_support_method" {
     description = "Specifies how you want CloudFront to serve HTTPS requests."
     type        = string
     default     = null
+}
+
+variable "cloudfront_functions" {
+    description = <<EOF
+List of Configurations Map for the cloudfront functions to be provisioned:
+name: (Required) Unique name for your CloudFront Function.
+runtime: (Required) Identifier of the function's runtime.
+comment: (Optional) Comment.
+publish: (Optional) Whether to publish creation/change as Live CloudFront Function Version.
+code_file: (Required) Source code File of the function (Path relative to root directory)
+EOF
+
+    type = any
+    default = []
 }
