@@ -384,8 +384,8 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="oai_etag"></a> [oai_etag](#output\_oai\_etag) | `string` | Current version of the origin access identity's information. |
 | <a name="oai_iam_arn"></a> [oai_iam_arn](#output\_oai\_iam\_arn) | `string` | Pre-generated ARN for use in S3 bucket policies. |
 | <a name="oai_path"></a> [oai_path](#output\_oai_path) | `string` | A shortcut to the full path for the origin access identity to use in CloudFront. |
-| <a name="public_keys"></a> [public_keys](#output\_public\_keys) | `string` | Map of the Public Keys where each entry will be a key-pair of Key Name and nested map of attributes (id and etag) for the Public Key. |
-| <a name="key_groups"></a> [key_groups](#output\_key\_groups) | `string` | Map of the Key Groups where each entry will be a key-pair of Group Name and nested map of attributes (id and etag) for the Key Group. |
+| <a name="public_keys"></a> [public_keys](#output\_public\_keys) | `map(map(string))` | Map of the Public Keys where each entry will be a key-pair of Key Name and nested map of attributes (id and etag) for the Public Key. |
+| <a name="key_groups"></a> [key_groups](#output\_key\_groups) | `map(map(string))` | Map of the Key Groups where each entry will be a key-pair of Group Name and nested map of attributes (id and etag) for the Key Group. |
 
 ### Authors
 
