@@ -1,3 +1,14 @@
+resource aws_cloudfront_monitoring_subscription "this" {
+  
+    distribution_id = aws_cloudfront_distribution.this.id
+
+    monitoring_subscription {
+        realtime_metrics_subscription_config {
+            realtime_metrics_subscription_status = var.enable_additional_moniroting ? "Enabled" : "Disabled"
+        }
+    }
+}
+
 resource aws_cloudfront_realtime_log_config "this" {
     for_each = { for log in var.realtime_log_configs: log.name => log }
 

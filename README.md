@@ -79,21 +79,21 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="minimum_protocol_version"></a> [minimum_protocol_version](#input\_minimum\_protocol\_version) | The minimum version of the SSL protocol, CloudFront to use for HTTPS connections if `cloudfront_default_certificate` is set `false`. | `string` | `"TLSv1"` | no |
 | <a name="ssl_support_method"></a> [ssl_support_method](#input\_ssl\_support\_method) | Specifies how you want CloudFront to serve HTTPS requests. | `string` | `null` | no |
 
+##### Policies
+
+| Name | Description | Type | Default | Required | Example|
+|:------|:------|:------|:------|:------:|:------|
+| <a name="cache_policies"></a> [cache_policies](#cache\_policy) | List of Configuration Map for Cache Policies to be provisioned. | `any` | `[]` | no |  |
+| <a name="origin_request_policies"></a> [origin_request_policies](#origin\_request\_policy) | List of Configuration Map for Origin Request Policies to be provisioned. | `any` | `[]` | no |  |
+| <a name="response_headers_policies"></a> [response_headers_policies](#response\_headers\_policy) | List of Configuration Map for Response Headers Policies to be provisioned. | `any` | `[]` | no |  |
+
 ##### Functions
 
 | Name | Description | Type | Default | Required | Example|
 |:------|:------|:------|:------|:------:|:------|
 | <a name="cloudfront_functions"></a> [cloudfront_functions](#cloudfront\_functions) | List of Configurations Map for the cloudfront functions to be provisioned | `map(string)` | `[]` | no |  |
 
-##### Policy
-
-| Name | Description | Type | Default | Required | Example|
-|:------|:------|:------|:------|:------:|:------|
-| <a name="origin_request_policy"></a> [origin_request_policy](#origin\_request\_policy) | List of Configuration Map for Origin Request Policies to be provisioned. | `any` | `[]` | no |  |
-| <a name="cache_policy"></a> [cache_policy](#cache\_policy) | List of Configuration Map for Cache Policies to be provisioned. | `any` | `[]` | no |  |
-| <a name="response_headers_policy"></a> [response_headers_policy](#response\_headers\_policy) | List of Configuration Map for Response Headers Policies to be provisioned. | `any` | `[]` | no |  |
-
-##### Realtime Logs Configuration
+##### Telemetry: Realtime Logs Configuration
 
 | Name | Description | Type | Default | Required | Example|
 |:------|:------|:------|:------|:------:|:------|
@@ -101,19 +101,20 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="create_realtime_logging_role"></a> [create_realtime_logging_role](#input\_create\_realtime\_logging\_role) | Flag to decide if IAM role needs to be provisioned that CloudFront can use to send real-time log data to the Kinesis data streams. | `bool` | `true` | no |  |
 | <a name="realtime_logging_role"></a> [realtime_logging_role](#input\_realtime\_logging\_role) | IAM Role Name to be provisioned that CloudFront can use to send real-time log data to the Kinesis data streams. | `string` | `null` | no |  |
 
-##### Cloudfront Origin Access Identity
+##### Cloudfront Security
 
 | Name | Description | Type | Default | Required |
 |:------|:------|:------|:------|:------:|
 | <a name="create_origin_access_identity"></a> [create_origin_access_identity](#input\_create\_origin\_access\_identity) | Flag to decide if create an Amazon Cloudfront Origin Access Identity. | `bool` | `false` | no |
 | <a name="oai_comments"></a> [oai_comments](#input\_oai\_comments) | An optional comment for the origin access identity. | `string` | `null` | no |
+| <a name="encryption_profiles"></a> [encryption_profiles](#encryption\_profile) | List of Configuration Map for Encryption Profiles to be provisioned. | `any` | `[]` | no |
 
-##### Cloudfront Public Key
+##### Key Management
 
 | Name | Description | Type | Default | Required | Example|
 |:------|:------|:------|:------|:------:|:------|
-| <a name="create_cloudfront_public_key"></a> [create_cloudfront_public_key](#input\_create\_cloudfront\_public\_key) | Flag to decide if create CloudFront public key. | `bool` | `false` | no |  |
-| <a name="cloudfront_public_key"></a> [cloudfront_public_key](#input\_cloudfront\_public\_key) | Configuration map (with following key-pair) for Public Key. | `map(string)` | `{}` | no |  |
+| <a name="public_keys"></a> [public_keys](#public_key) | List of Configuration map for Public Keys. | `list(map(string))` | `[]` | no |  |
+| <a name="key_groups"></a> [key_groups](#key_group) | List of Configuration map for Key Groups. | `list(map(string))` | `[]` | no |  |
 
 
 ### Nested Configuration Maps:  
@@ -169,11 +170,12 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="max_ttl"></a> [max_ttl](#input\_max\_ttl) | The maximum amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request to your origin to determine whether the object has been updated. | `number` | `31536000` | no |  |
 | <a name="smooth_streaming"></a> [smooth_streaming](#input\_smooth\_streaming) | Indicates whether you want to distribute media files in Microsoft Smooth Streaming format. | `bool` | `true` | no |  |
 | <a name="realtime_log_config_name"></a> [realtime_log_config_name](#input\_realtime\_log\_config\_name) | The name of the Realitime log configuration (as defined in `realtime_log_configs`) | `string` | `null` | no |  |
+| <a name="encryption_profile_name"></a> [encryption_profile_name](#input\_encryption\_profile\_name) | The name of the Field Level Encryption Profile (as defined in `encryption_profiles`) | `string` | `null` | no |  |
 | <a name="trusted_signers"></a> [trusted_signers](#input\_trusted\_signers) | List of AWS account IDs (or self) that you want to allow to create signed URLs for private content. | `list(string)` | `null` | no |  |
-| <a name="trusted_key_groups"></a> [trusted_key_groups](#input\_trusted\_key\_groups) | List of nested attributes for active trusted key groups, if the distribution is set up to serve private content with signed URLs. | `any` | `null` | no |  |
-| <a name="cache_policy_name"></a> [cache_policy_name](#input\_cache\_policy\_name) | The name of the cache policy that is attached to the cache behavior (as defined in `cache_policy`). | `string` | `null` | no |  |
-| <a name="origin_request_policy_name"></a> [origin_request_policy_name](#input\_origin\_request\_policy\_name) | The name of the origin request policy that is attached to the behavior (as defined in `origin_request_policy`). | `string` | `null` | no |  |
-| <a name="response_headers_policy_name"></a> [response_headers_policy_name](#input\_response\_headers\_policy\_name) | The name of the Response Header policy that is attached to the cache behavior (as defined in `response_headers_policy`). | `string` | `null` | no |  |
+| <a name="trusted_key_groups"></a> [trusted_key_groups](#input\_trusted\_key\_groups) | List of trusted Key Group Names (as defined in the `key_groups`), if the distribution is set up to serve private content with signed URLs. | `list(string)` | `null` | no |  |
+| <a name="cache_policy_name"></a> [cache_policy_name](#input\_cache\_policy\_name) | The name of the cache policy that is attached to the cache behavior (as defined in `cache_policies`). | `string` | `null` | no |  |
+| <a name="origin_request_policy_name"></a> [origin_request_policy_name](#input\_origin\_request\_policy\_name) | The name of the origin request policy that is attached to the behavior (as defined in `origin_request_policies`). | `string` | `null` | no |  |
+| <a name="response_headers_policy_name"></a> [response_headers_policy_name](#input\_response\_headers\_policy\_name) | The name of the Response Header policy that is attached to the cache behavior (as defined in `response_headers_policies`). | `string` | `null` | no |  |
 | <a name="handle_forwarding"></a> [handle_forwarding](#input\_handle\_forwarding) | Flag to decide if thoe configuration should be done how the Cloudfront should handle the query strings, cookies and headers. | `bool` | `false` | no |  |
 | <a name="cookie_behavior"></a> [cookie_behavior](#input\_cookie\_behavior) | Determines if CloudFront forward cookies to the origin. | `string` | `null` | no |  |
 | <a name="cookies_items"></a> [cookies_items](#input\_cookies\_items) | Comma seperated List of Cookie names that CloudFront forward to your origin. | `string` | `null` | no |  |
@@ -333,6 +335,33 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="header"></a> [header](#input\_header) | The HTTP response header name. | `string` |  | yes |  |
 | <a name="value"></a> [value](#input\_value) | The value for the HTTP response header. | `string` |  | yes |  |
 | <a name="override_origin"></a> [override_origin](#input\_override\_origin) | Flag to decide if CloudFront overrides a response header with the same name received from the origin with this header. | `bool` | `true` | no |  |
+
+#### encryption_profile
+
+| Name | Description | Type | Default | Required | Example |
+|:------|:------|:------|:------|:------:|:------|
+| <a name="name"></a> [name](#input\_name) | Unique name to identify the Field Level Encryption Profile. | `string` |  | yes |  |
+| <a name="comments"></a> [comments](#input\_comments) | Comments to describe the Field Level Encryption Profile. | `string` |  | no |  |
+| <a name="key_name"></a> [key_name](#input\_key\_name) | Public Key Name (as defined in `public_keys`), to be used when encrypting the fields that match the patterns. | `string` |  | yes |  |
+| <a name="provider_id"></a> [provider_id](#input\_provider\_id) | The provider associated with the public key being used for encryption. | `string` |  | yes |  |
+| <a name="field_patterns"></a> [field_patterns](#input\_field\_patterns) | The list of field patterns to specify the fields that should be encrypted. | `list(string)` |  | yes |  |
+
+#### public_key
+
+| Name | Description | Type | Default | Required | Example |
+|:------|:------|:------|:------|:------:|:------|
+| <a name="name"></a> [name](#input\_name) | The name for the public key. | `string` |  | yes |  |
+| <a name="comments"></a> [comments](#input\_comments) | Any comments about the public key. | `string` |  | no |  |
+| <a name="key_file"></a> [key_file](#input\_key\_file) | The encoded public key file (with path relative to root) to add to CloudFront to use with features like field-level encryption. | `string` |  | yes |  |
+
+#### key_group
+
+| Name | Description | Type | Default | Required | Example |
+|:------|:------|:------|:------|:------:|:------|
+| <a name="name"></a> [name](#input\_name) | The name for the public key. | `string` |  | yes |  |
+| <a name="comments"></a> [comments](#input\_comments) | Any comments about the public key. | `string` |  | no |  |
+| <a name="keys"></a> [keys](#input\_keys) | The comma separated list of key names (as defined in `public_keys`) | `string` |  | yes |  |
+
 
 ### Outputs
 

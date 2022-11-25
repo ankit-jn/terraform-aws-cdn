@@ -93,12 +93,13 @@ resource aws_cloudfront_distribution "this" {
         
         smooth_streaming = try(var.default_cache_behavior.smooth_streaming, true)
         realtime_log_config_arn = try(var.default_cache_behavior.realtime_log_config_name, "") == "" ? null : realtime_log_config.this[var.default_cache_behavior.realtime_log_config_name].arn
-
-        ## TO DO
-        # field_level_encryption_id = null
+        field_level_encryption_id = try(cache_behavior.value.encryption_profile_name, "") == "" ? null : aws_cloudfront_field_level_encryption_profile.this[cache_behavior.value.encryption_profile_name].id
         
         trusted_signers     = try(var.default_cache_behavior.trusted_signers, null)
-        trusted_key_groups  = try(var.default_cache_behavior.trusted_key_groups, null)
+        trusted_key_groups  = can(var.default_cache_behavior.trusted_key_groups) ? [
+                                            for key_group_name in split(",", var.default_cache_behavior.trusted_key_groups): 
+                                                            aws_cloudfront_public_key.this[key_group_name].id] : null
+        
 
         cache_policy_id = can(var.default_cache_behavior.cache_policy_name) ? aws_cloudfront_cache_policy.this[var.default_cache_behavior.cache_policy_name].id : null
         origin_request_policy_id = can(var.default_cache_behavior.origin_request_policy_name) ? aws_cloudfront_origin_request_policy.this[var.default_cache_behavior.origin_request_policy_name].id : null
@@ -159,12 +160,12 @@ resource aws_cloudfront_distribution "this" {
             
             smooth_streaming = try(cache_behavior.value.smooth_streaming, true)
             realtime_log_config_arn = try(cache_behavior.value.realtime_log_config_name, "") == "" ? null : realtime_log_config.this[cache_behavior.value.realtime_log_config_name].arn
-
-            ## TO DO
-            # field_level_encryption_id = null
-
+            field_level_encryption_id = try(cache_behavior.value.encryption_profile_name, "") == "" ? null : aws_cloudfront_field_level_encryption_profile.this[cache_behavior.value.encryption_profile_name].id
+            
             trusted_signers     = try(cache_behavior.value.trusted_signers, null)
-            trusted_key_groups  = try(cache_behavior.value.trusted_key_groups, null)
+            trusted_key_groups  = can(cache_behavior.value.trusted_key_groups) ? [
+                                            for key_group_name in split(",", cache_behavior.value.trusted_key_groups): 
+                                                            aws_cloudfront_public_key.this[key_group_name].id] : null
 
             cache_policy_id = can(cache_behavior.value.cache_policy_name) ? aws_cloudfront_cache_policy.this[cache_behavior.value.cache_policy_name].id : null
             origin_request_policy_id = can(cache_behavior.value.origin_request_policy_name) ? aws_cloudfront_origin_request_policy.this[cache_behavior.value.origin_request_policy_name].id : null

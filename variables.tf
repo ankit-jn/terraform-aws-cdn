@@ -192,7 +192,7 @@ max_ttl: (Optional) The maximum amount of time (in seconds) that an object is in
 smooth_streaming: (Optional) Indicates whether you want to distribute media files in Microsoft Smooth Streaming format.
 realtime_log_config_name: (Optional) The name of the Realitime log configuration (as defined in `realtime_log_configs`)
 trusted_signers: (Optional) List of AWS account IDs (or self) that you want to allow to create signed URLs for private content.
-trusted_key_groups: (Optional) List of nested attributes for active trusted key groups, if the distribution is set up to serve private content with signed URLs.
+trusted_key_groups: (Optional) List of trusted Key Group Names (as defined in the `key_groups`), if the distribution is set up to serve private content with signed URLs.
 
 origin_request_policy_name: (Optional) The name of the Origin Request Policy that is attached to the behavior (as defined in `origin_request_policy`).
 cache_policy_name: (Optional) The name of the Cache policy that is attached to the cache behavior (as defined in `cache_policy`).
@@ -260,26 +260,9 @@ variable "ssl_support_method" {
 }
 
 ##########################
-## Cloudfront Functions
-##########################
-variable "cloudfront_functions" {
-    description = <<EOF
-List of Configurations Map for the cloudfront functions to be provisioned:
-name: (Required) Unique name for your CloudFront Function.
-runtime: (Required) Identifier of the function's runtime.
-comment: (Optional) Comment.
-publish: (Optional) Whether to publish creation/change as Live CloudFront Function Version.
-code_file: (Required) Source code File of the function (Path relative to root directory)
-EOF
-
-    type = any
-    default = []
-}
-
-##########################
 ## Policies
 ##########################
-variable "cache_policy" {
+variable "cache_policies" {
     description = <<EOF
 List of Configuration Map (with the following properties) for Cache Policies to be provisioned.
 
@@ -306,7 +289,7 @@ EOF
     default = []
 }
 
-variable "origin_request_policy" {
+variable "origin_request_policies" {
     description = <<EOF
 List of Configuration Map (with the following properties) for Origin Request Policies to be provisioned.
 
@@ -327,7 +310,7 @@ EOF
     default = []
 }
 
-variable "response_headers_policy" {
+variable "response_headers_policies" {
     description = <<EOF
 List of Configuration Map (with the following properties) for Response Headers Policies to be provisioned.
 
@@ -390,9 +373,26 @@ EOF
     default = []
 }
 
-##############################
-## Realtime Logs Configuration
-##############################
+##########################
+## Cloudfront Functions
+##########################
+variable "cloudfront_functions" {
+    description = <<EOF
+List of Configurations Map for the cloudfront functions to be provisioned:
+name: (Required) Unique name for your CloudFront Function.
+runtime: (Required) Identifier of the function's runtime.
+comment: (Optional) Comment.
+publish: (Optional) Whether to publish creation/change as Live CloudFront Function Version.
+code_file: (Required) Source code File of the function (Path relative to root directory)
+EOF
+
+    type = any
+    default = []
+}
+
+##########################################
+## Telemetry: Realtime Logs Configuration
+##########################################
 variable "realtime_log_configs" {
     description = <<EOF
 List of Configuration Maps for CloudFront real-time log:
@@ -417,7 +417,7 @@ variable "realtime_logging_role" {
 }
 
 ##########################
-## Origin Access Identity
+## Cloudfront Security
 ##########################
 variable "create_origin_access_identity" {
     description = "Flag to decide if create an Amazon Cloudfront Origin Access Identity."
@@ -431,23 +431,45 @@ variable "oai_comments" {
     default     = null
 }
 
-##########################
-## Public Key
-##########################
-variable "create_cloudfront_public_key" {
-    description = "Flag to decide if create CloudFront public key."
-    type        = bool
-    default     = false
+variable "encryption_profiles" {
+    description = <<EOF
+List of Configuration Map (with the following properties) for Field Level Encryption Profiles to be provisioned.
+
+name: (Required) Unique name to identify the Field Level Encryption Profile.
+comments: (Optional) Comments to describe the Field Level Encryption Profile.
+
+key_name: (Required) Public Key Name (as defined in `public_keys`), to be used when encrypting the fields that match the patterns.
+provider_id: (Required) The provider associated with the public key being used for encryption.
+field_patterns: (Requried) The list of field patterns to specify the fields that should be encrypted.
+
+EOF
+    type    = any
+    default = []
 }
 
-variable "cloudfront_public_key" {
+##########################
+## Key Management
+##########################
+variable "public_keys" {
     description = <<EOF
-Configuration map (with following key-pair) for Public Key.
+List of Configuration map (with following key-pair) for Public Keys.
 
-name: The name for the public key.
-file: The encoded public key file (with path relative to root) to add to CloudFront to use with features like field-level encryption.
-comments: An optional comment about the public key.
+name: (Required) The name for the public key.
+comments: (Optional) Any comments about the public key.
+key_file: (Required) The encoded public key file (with path relative to root) to add to CloudFront to use with features like field-level encryption.
 EOF
-    type        = map(string)
-    default     = {}
+    type        = list(map(string))
+    default     = []
+}
+
+variable "key_groups" {
+    description = <<EOF
+List of Configuration map (with following key-pair) for Public Keys.
+
+name: (Required) The name for the public key.
+comments: (Optional) Any comments about the public key.
+keys: (Required) The comma separated list of key names (as defined in `public_keys`)
+EOF
+    type        = list(map(string))
+    default     = []
 }

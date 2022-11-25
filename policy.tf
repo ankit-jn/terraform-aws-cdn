@@ -1,6 +1,6 @@
 resource aws_cloudfront_cache_policy "this" {
 
-    for_each = { for policy in var.cache_policy: policy.name => policy }
+    for_each = { for policy in var.cache_policies: policy.name => policy }
 
     name = each.key
     comment = coalesce(each.value.comments, format("Cache Policy - %s", each.key))
@@ -30,7 +30,7 @@ resource aws_cloudfront_cache_policy "this" {
 }
 
 resource aws_cloudfront_origin_request_policy "this" {
-    for_each = { for policy in var.origin_request_policy: policy.name => policy }
+    for_each = { for policy in var.origin_request_policies: policy.name => policy }
 
     name = each.key
     comment = coalesce(each.value.comments, format("Origin Request Policy - %s", each.key))
@@ -53,7 +53,7 @@ resource aws_cloudfront_origin_request_policy "this" {
 
 resource aws_cloudfront_response_headers_policy "this" {
 
-    for_each = { for policy in var.response_headers_policy: policy.name => policy }
+    for_each = { for policy in var.response_headers_policies: policy.name => policy }
 
     name = each.key
     comment = coalesce(each.value.comments, format("Response Headers Policy - %s", each.key))
