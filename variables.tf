@@ -190,12 +190,19 @@ min_ttl: (Optional) The minimum amount of time, the objects to stay in CloudFron
 max_ttl: (Optional) The maximum amount of time (in seconds) that an object is in a CloudFront cache before CloudFront forwards another request to your origin to determine whether the object has been updated.
 
 smooth_streaming: (Optional) Indicates whether you want to distribute media files in Microsoft Smooth Streaming format.
-realtime_log_config_name: (Optional) The name of the Realitime log configuration (as defined in `realtime_log_configs`)
+realtime_log_config_arn: (Optional) The ARN of the existing Realtime log configuration.
+realtime_log_config_name: (Optional) The name of the Realtime log configuration (as defined in `realtime_log_configs`).
+encryption_profile_arn: (Optional) The ARN of the existing Field Level Encryption Profile.
+encryption_profile_name: (Optional) The name of the Field Level Encryption Profile (as defined in `encryption_profiles`).
 trusted_signers: (Optional) List of AWS account IDs (or self) that you want to allow to create signed URLs for private content.
-trusted_key_groups: (Optional) List of trusted Key Group Names (as defined in the `key_groups`), if the distribution is set up to serve private content with signed URLs.
+trusted_key_group_arns: (Optional) List of ARN for existing trusted Key Groups, if the distribution is set up to serve private content with signed URLs.
+trusted_key_group_names: (Optional) List of trusted Key Group Names (as defined in the `key_groups`), if the distribution is set up to serve private content with signed URLs.
 
+origin_request_policy_arn: (Optional) The ARN of the existing Origin Request Policy that is attached to the behavior (as defined in `origin_request_policy`).
 origin_request_policy_name: (Optional) The name of the Origin Request Policy that is attached to the behavior (as defined in `origin_request_policy`).
+cache_policy_arn: (Optional) The ARN of the existing Cache policy that is attached to the cache behavior (as defined in `cache_policy`).
 cache_policy_name: (Optional) The name of the Cache policy that is attached to the cache behavior (as defined in `cache_policy`).
+response_headers_policy_arn: (Optional) The ARN of the existing Response Header Policy that is attached to the cache behavior (as defined in `response_headers_policy`).
 response_headers_policy_name: (Optional) The name of the Response Header Policy that is attached to the cache behavior (as defined in `response_headers_policy`).
 
 ## forwarded_values properties
