@@ -194,8 +194,9 @@ realtime_log_config_name: (Optional) The name of the Realitime log configuration
 trusted_signers: (Optional) List of AWS account IDs (or self) that you want to allow to create signed URLs for private content.
 trusted_key_groups: (Optional) List of nested attributes for active trusted key groups, if the distribution is set up to serve private content with signed URLs.
 
-origin_request_policy_name: (Optional) The name of the origin request policy that is attached to the behavior (as defined in `origin_request_policy`).
-cache_policy_name: (Optional) The name of the cache policy that is attached to the cache behavior (as defined in `cache_policy`).
+origin_request_policy_name: (Optional) The name of the Origin Request Policy that is attached to the behavior (as defined in `origin_request_policy`).
+cache_policy_name: (Optional) The name of the Cache policy that is attached to the cache behavior (as defined in `cache_policy`).
+response_headers_policy_name: (Optional) The name of the Response Header Policy that is attached to the cache behavior (as defined in `response_headers_policy`).
 
 ## forwarded_values properties
 handle_forwarding: (Optional) Flag to decide if thoe configuration should be done how the Cloudfront should handle the query strings, cookies and headers.
@@ -278,27 +279,6 @@ EOF
 ##########################
 ## Policies
 ##########################
-variable "origin_request_policy" {
-    description = <<EOF
-List of Configuration Map (with the following properties) for Origin Request Policies to be provisioned.
-
-name: (Required) Unique name to identify the origin request policy.
-comments: (Optional) Comment to describe the origin request policy.
-
-cookie_behavior: (Optional) Determines whether any cookies in viewer requests are included in the origin request key and automatically included in requests that CloudFront sends to the origin.
-cookies_items: (Optional) Comma seperated List of Cookie names.
-
-header_behavior: (Optional) Determines whether any HTTP headers are included in the origin request key and automatically included in requests that CloudFront sends to the origin. 
-headers_items: (Optional) Comma seperated List of header names.
-
-query_string_behavior: (Optional) Determines whether any URL query strings in viewer requests are included in the origin request key and automatically included in requests that CloudFront sends to the origin.
-query_strings_items: (Optional) Comma seperated List of query strings.
-
-EOF
-    type    = any
-    default = []
-}
-
 variable "cache_policy" {
     description = <<EOF
 List of Configuration Map (with the following properties) for Cache Policies to be provisioned.
@@ -321,6 +301,90 @@ query_strings_items: (Optional) Comma seperated List of query strings.
 
 enable_accept_encoding_brotli: (Optional) A flag that can affect whether the Accept-Encoding HTTP header is included in the cache key and included in requests that CloudFront sends to the origin.
 enable_accept_encoding_gzip: (Optional) A flag that can affect whether the Accept-Encoding HTTP header is included in the cache key and included in requests that CloudFront sends to the origin.
+EOF
+    type    = any
+    default = []
+}
+
+variable "origin_request_policy" {
+    description = <<EOF
+List of Configuration Map (with the following properties) for Origin Request Policies to be provisioned.
+
+name: (Required) Unique name to identify the origin request policy.
+comments: (Optional) Comment to describe the origin request policy.
+
+cookie_behavior: (Optional) Determines whether any cookies in viewer requests are included in the origin request key and automatically included in requests that CloudFront sends to the origin.
+cookies_items: (Optional) Comma seperated List of Cookie names.
+
+header_behavior: (Optional) Determines whether any HTTP headers are included in the origin request key and automatically included in requests that CloudFront sends to the origin. 
+headers_items: (Optional) Comma seperated List of header names.
+
+query_string_behavior: (Optional) Determines whether any URL query strings in viewer requests are included in the origin request key and automatically included in requests that CloudFront sends to the origin.
+query_strings_items: (Optional) Comma seperated List of query strings.
+
+EOF
+    type    = any
+    default = []
+}
+
+variable "response_headers_policy" {
+    description = <<EOF
+List of Configuration Map (with the following properties) for Response Headers Policies to be provisioned.
+
+name: (Required) Unique name to identify the Response Headers policy.
+comments: (Optional) Comment to describe the Response Headers policy.
+
+## CORS configurations
+configure_cors: (Optional) Flag to decide if Cross-Origin Resource Sharing should be configured.
+access_control_allow_credentials: The boolean flag that CloudFront uses as the value for the `Access-Control-Allow-Credentials` HTTP response header.
+origin_override: (Optional) Flag to decide how CloudFront behaves for the HTTP response header.
+max_age: (Optional) A number that CloudFront uses as the value for the `Access-Control-Max-Age` HTTP response header.
+allowed_origins: (Optional) List of origins that CloudFront can use as the value for the `Access-Control-Allow-Origin` HTTP response header.
+allowed_headers: (Optional) List of HTTP header names that CloudFront includes as values for the `Access-Control-Allow-Headers` HTTP response header.
+allowed_methods: (Optional) List of HTTP methods that CloudFront includes as values for the `Access-Control-Allow-Methods` HTTP response header.
+exposed_headers: (Optional) List of HTTP headers that CloudFront includes as values for the `Access-Control-Expose-Headers` HTTP response header.
+
+## Security Headers
+configure_strict_transport_security: (Optional) Flag to decide if configure `Strict-Transport-Security` response header.
+strict_transport_security: (Optional) Map of `Strict-Transport-Security` response header configuration
+    max_age_sec: (Optional) A number that CloudFront uses as the value for the `max-age` directive in the `Strict-Transport-Security` HTTP response header.
+    include_subdomains: (Optional) Flag to decide if CloudFront includes the `includeSubDomains` directive in the `Strict-Transport-Security` HTTP response header.
+    origin_override: (Optional) Flag to decide if CloudFront overrides the `Strict-Transport-Security` HTTP response header received from the origin with the one specified in this response headers policy.
+    preload: (Optional) Flag to decide if CloudFront includes the preload directive in the `Strict-Transport-Security` HTTP response header.
+
+configure_content_type_options: (Optional) Flag to decide if CloudFront adds the `X-Content-Type-Options` header to responses.
+content_type_options_override_origin: Flag to decide if Cloudfront overrides the `X-Content-Type-Options` HTTP response header received from the origin with the one specified in this response headers policy.
+
+configure_frame_options: (Optional) Flag to decide if CloudFront adds the `X-Frame-Options` header to responses.
+frame_option: (Optional) The value of the `X-Frame-Options` HTTP response header.
+frame_options_override_origin: (Optional) Flag to decide if Cloudfront overrides the `X-Frame-Options` HTTP response header received from the origin with the one specified in this response headers policy.
+
+configure_xss_protection: (Optional) Flag to decide if configure `X-XSS-Protection` response header.
+xss_protection: (Optional) Map of `X-XSS-Protection` response header configuration
+    mode_block: (Optional) Flag to decide if CloudFront includes the `mode=block` directive in the X-XSS-Protection header.
+    override_origin: (Optional) Flag to decide if CloudFront overrides the `X-XSS-Protection` HTTP response header received from the origin with the one specified in this response headers policy.
+    protection: (Optional) Flag to decide if protection is enabled.
+    report_uri: (Optional) A reporting URI, which CloudFront uses as the value of the report directive in the X-XSS-Protection header.
+
+configure_referrer_policy: (Optional) Flag to decide if configure `Referrer-Policy` response header.
+referrer_policy: (Optional) Map of `Referrer-Policy` response header configuration
+    policy: (Optional) The value of the `Referrer-Policy` HTTP response header.
+    override_origin: (Optional) Flag to decide if CloudFront overrides the `Referrer-Policy` HTTP response header received from the origin with the one specified in this response headers policy.
+
+configure_content_security_policy: (Optional) Flag to decide if configure `Content-Security-Policy` response header.
+content_security_policy: (Optional) Map of `Content-Security-Policy` response header configuration
+    policy: (Optional) The value of the `Content-Security-Policy` HTTP response header.
+    override_origin: (Optional) Flag to decide if CloudFront overrides the `Content-Security-Policy` HTTP response header received from the origin with the one specified in this response headers policy.
+
+## Custom Headers
+custom_headers: (Optional) List of Map (with the following properties) for Custom Headers.
+    header: (Required) The HTTP response header name.
+    value: (Required) The value for the HTTP response header.
+    override_origin: (Optional) Flag to decide if CloudFront overrides a response header with the same name received from the origin with this header.
+
+## Server-Timing Header
+enable_server_timing_header: (Optional) FLag to decide if Cloudfront show set `Server-Timing` header in HTTP responses.
+sampling_rate: (Optional) A number 0–100 (inclusive) that specifies the percentage of responses that you want CloudFront to add the Server-Timing header to. 
 EOF
     type    = any
     default = []

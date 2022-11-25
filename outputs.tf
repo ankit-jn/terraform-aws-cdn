@@ -55,17 +55,6 @@ output "monitoring_subscription_id" {
     value       = aws_cloudfront_monitoring_subscription.this.id
 }
 
-## Origin Request Policy
-output "origin_request_policies" {
-    description = "The Map of attributes for Origin Request Policies."
-    value       = { for name, policy in aws_cloudfront_origin_request_policy.this:
-                            name => {
-                                id = policy.id
-                                etag  = policy.etag
-                            }}
-}
-
-
 ## Cache Policy
 output "cache_policies" {
     description = "The Map of attributes for Cache Policies."
@@ -76,7 +65,26 @@ output "cache_policies" {
                             }}
 }
 
-## Realtime Log COnfigurations
+## Origin Request Policy
+output "origin_request_policies" {
+    description = "The Map of attributes for Origin Request Policies."
+    value       = { for name, policy in aws_cloudfront_origin_request_policy.this:
+                            name => {
+                                id = policy.id
+                                etag  = policy.etag
+                            }}
+}
+
+## Response Headers Policy
+output "response_headers_policies" {
+    description = "The Map of attributes for Response Headers Policies."
+    value       = { for name, policy in aws_cloudfront_response_headers_policy.this:
+                            name => {
+                                id = policy.id
+                                etag  = policy.etag
+                            }}
+}
+## Realtime Log Configurations
 output "realtime_log_configs" {
     description = "The map of Attributes for Realtime Log Configurations."
     value       = { for name, config in aws_cloudfront_realtime_log_config.this:

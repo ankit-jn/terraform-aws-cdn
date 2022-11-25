@@ -6,8 +6,9 @@ A Terraform module for configuring Content Delivery Network in AWS
 This module features the following components to be provisioned:
 
 - Cloudfront Distribution [[aws_cloudfront_distribution](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_distribution)]
-- Origin Request Policy [[aws_cloudfront_origin_request_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_origin_request_policy)]
 - Cache Policy [[aws_cloudfront_cache_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_cache_policy)]
+- Origin Request Policy [[aws_cloudfront_origin_request_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_origin_request_policy)]
+- Response Headers Policy [[aws_cloudfront_response_headers_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_response_headers_policy)]
 - Origin Access Identity [[aws_cloudfront_origin_access_identity](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_origin_access_identity)]
 - Cloudfront Public Key [[aws_cloudfront_public_key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_public_key)]
 - Additional Cloudwatch Monitoring for CDN [[aws_cloudfront_monitoring_subscription](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_monitoring_subscription)]
@@ -61,7 +62,6 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="origins"></a> [origins](#origins) | List of Cloudfront Distribution's Origins Configiration Map. | `any` |  | yes |  |
 | <a name="origin_groups"></a> [origin_groups](#origin\_groups) | List of Origin Groups Map. | `any` | `[]` | no |  |
 
-
 ##### Cache Behaviors
 
 | Name | Description | Type | Default | Required | Example|
@@ -90,7 +90,8 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | Name | Description | Type | Default | Required | Example|
 |:------|:------|:------|:------|:------:|:------|
 | <a name="origin_request_policy"></a> [origin_request_policy](#origin\_request\_policy) | List of Configuration Map for Origin Request Policies to be provisioned. | `any` | `[]` | no |  |
-| <a name="cache_policy"></a> [cache_policy](#cache_policy) | List of Configuration Map for Cache Policies to be provisioned. | `any` | `[]` | no |  |
+| <a name="cache_policy"></a> [cache_policy](#cache\_policy) | List of Configuration Map for Cache Policies to be provisioned. | `any` | `[]` | no |  |
+| <a name="response_headers_policy"></a> [response_headers_policy](#response\_headers\_policy) | List of Configuration Map for Response Headers Policies to be provisioned. | `any` | `[]` | no |  |
 
 ##### Realtime Logs Configuration
 
@@ -170,8 +171,9 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="realtime_log_config_name"></a> [realtime_log_config_name](#input\_realtime\_log\_config\_name) | The name of the Realitime log configuration (as defined in `realtime_log_configs`) | `string` | `null` | no |  |
 | <a name="trusted_signers"></a> [trusted_signers](#input\_trusted\_signers) | List of AWS account IDs (or self) that you want to allow to create signed URLs for private content. | `list(string)` | `null` | no |  |
 | <a name="trusted_key_groups"></a> [trusted_key_groups](#input\_trusted\_key\_groups) | List of nested attributes for active trusted key groups, if the distribution is set up to serve private content with signed URLs. | `any` | `null` | no |  |
-| <a name="origin_request_policy_name"></a> [origin_request_policy_name](#input\_origin\_request\_policy\_name) | The name of the origin request policy that is attached to the behavior (as defined in `origin_request_policy`). | `string` | `null` | no |  |
 | <a name="cache_policy_name"></a> [cache_policy_name](#input\_cache\_policy\_name) | The name of the cache policy that is attached to the cache behavior (as defined in `cache_policy`). | `string` | `null` | no |  |
+| <a name="origin_request_policy_name"></a> [origin_request_policy_name](#input\_origin\_request\_policy\_name) | The name of the origin request policy that is attached to the behavior (as defined in `origin_request_policy`). | `string` | `null` | no |  |
+| <a name="response_headers_policy_name"></a> [response_headers_policy_name](#input\_response\_headers\_policy\_name) | The name of the Response Header policy that is attached to the cache behavior (as defined in `response_headers_policy`). | `string` | `null` | no |  |
 | <a name="handle_forwarding"></a> [handle_forwarding](#input\_handle\_forwarding) | Flag to decide if thoe configuration should be done how the Cloudfront should handle the query strings, cookies and headers. | `bool` | `false` | no |  |
 | <a name="cookie_behavior"></a> [cookie_behavior](#input\_cookie\_behavior) | Determines if CloudFront forward cookies to the origin. | `string` | `null` | no |  |
 | <a name="cookies_items"></a> [cookies_items](#input\_cookies\_items) | Comma seperated List of Cookie names that CloudFront forward to your origin. | `string` | `null` | no |  |
@@ -180,19 +182,6 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="query_strings_cache_keys"></a> [query_strings_cache_keys](#input\_query\_strings\_cache\_keys) | Comma seperated List of Query strings which will be cahced. | `string` | `null` | no |  |
 | <a name="edge_lambda_functions"></a> [edge_lambda_functions](#edge\_lambda\_functions) | Map of Lambda functions that Cloudfront can trigger on a predefined event. | `any` | `{}` | no |  |
 | <a name="cloudfront_functions"></a> [cloudfront_functions](#input\_cloudfront\_functions) | Map of Cloudfront Functions:<br>&nbsp;&nbsp;&nbsp;<b>Map-Key:</b> Event Name (`viewer-request` or `viewer-response`)<br>&nbsp;&nbsp;&nbsp;<b>Map-Value:</b> Cloudfront function name as defined in `cloudfront_functions` | `map(string)` | `{}` | no |  |
-
-#### origin_request_policy
-
-| Name | Description | Type | Default | Required | Example |
-|:------|:------|:------|:------|:------:|:------|
-| <a name="name"></a> [name](#input\_name) | Unique name to identify the origin request policy. | `string` |  | yes |  |
-| <a name="comments"></a> [comments](#input\_comments) | Comment to describe the origin request policy. | `string` | `Origin Request Policy - <Policy Name>` | no |  |
-| <a name="cookie_behavior"></a> [cookie_behavior](#input\_cookie\_behavior) | Determines whether any cookies in viewer requests are included in the origin request key and automatically included in requests that CloudFront sends to the origin. | `string` | `"none"` | no |  |
-| <a name="cookies_items"></a> [cookies_items](#input\_cookies\_items) | Comma seperated List of Cookie names. | `string` | `""` | no |  |
-| <a name="header_behavior"></a> [header_behavior](#input\_header\_behavior) | Determines whether any HTTP headers are included in the origin request key and automatically included in requests that CloudFront sends to the origin.  | `string` | `"none"` | no |  |
-| <a name="headers_items"></a> [headers_items](#input\_headers\_items) | Comma seperated List of header names. | `string` | `""` | no |  |
-| <a name="query_string_behavior"></a> [query_string_behavior](#input\_query\_string\_behavior) | Determines whether any URL query strings in viewer requests are included in the origin request key and automatically included in requests that CloudFront sends to the origin. | `string` | `"none"` | no |  |
-| <a name="query_strings_items"></a> [query_strings_items](#input\_query\_strings\_items) | Comma seperated List of query strings. | `string` | `""` | no |  |
 
 #### cache_policy
 
@@ -211,6 +200,72 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="query_strings_items"></a> [query_strings_items](#input\_query\_strings\_items) | Comma seperated List of query strings. | `string` | `""` | no |  |
 | <a name="enable_accept_encoding_brotli"></a> [enable_accept_encoding_brotli](#input\_enable\_accept\_encoding\_brotli) | A flag that can affect whether the Accept-Encoding HTTP header is included in the cache key and included in requests that CloudFront sends to the origin. | `bool` | `true` | no |  |
 | <a name="enable_accept_encoding_gzip"></a> [enable_accept_encoding_gzip](#input\_enable\_accept\_encoding\_gzip) | A flag that can affect whether the Accept-Encoding HTTP header is included in the cache key and included in requests that CloudFront sends to the origin. | `bool` | `true` | no |  |
+
+#### origin_request_policy
+
+| Name | Description | Type | Default | Required | Example |
+|:------|:------|:------|:------|:------:|:------|
+| <a name="name"></a> [name](#input\_name) | Unique name to identify the origin request policy. | `string` |  | yes |  |
+| <a name="comments"></a> [comments](#input\_comments) | Comment to describe the origin request policy. | `string` | `Origin Request Policy - <Policy Name>` | no |  |
+| <a name="cookie_behavior"></a> [cookie_behavior](#input\_cookie\_behavior) | Determines whether any cookies in viewer requests are included in the origin request key and automatically included in requests that CloudFront sends to the origin. | `string` | `"none"` | no |  |
+| <a name="cookies_items"></a> [cookies_items](#input\_cookies\_items) | Comma seperated List of Cookie names. | `string` | `""` | no |  |
+| <a name="header_behavior"></a> [header_behavior](#input\_header\_behavior) | Determines whether any HTTP headers are included in the origin request key and automatically included in requests that CloudFront sends to the origin.  | `string` | `"none"` | no |  |
+| <a name="headers_items"></a> [headers_items](#input\_headers\_items) | Comma seperated List of header names. | `string` | `""` | no |  |
+| <a name="query_string_behavior"></a> [query_string_behavior](#input\_query\_string\_behavior) | Determines whether any URL query strings in viewer requests are included in the origin request key and automatically included in requests that CloudFront sends to the origin. | `string` | `"none"` | no |  |
+| <a name="query_strings_items"></a> [query_strings_items](#input\_query\_strings\_items) | Comma seperated List of query strings. | `string` | `""` | no |  |
+
+#### response_headers_policy
+
+##### General
+
+| Name | Description | Type | Default | Required | Example |
+|:------|:------|:------|:------|:------:|:------|
+| <a name="name"></a> [name](#input\_name) | Unique name to identify the response headers policy. | `string` |  | yes |  |
+| <a name="comments"></a> [comments](#input\_comments) | Comment to describe the response headers policy. | `string` | `Response Headers Policy - <Policy Name>` | no |  |
+
+##### Cross-origin resource sharing (CORS)
+
+| Name | Description | Type | Default | Required | Example |
+|:------|:------|:------|:------|:------:|:------|
+| <a name="configure_cors"></a> [configure_cors](#input\_configure\_cors) | Flag to decide if Cross-Origin Resource Sharing should be configured. | `bool` | `false` | no |  |
+| <a name="access_control_allow_credentials"></a> [access_control_allow_credentials](#input\_access\_control\_allow\_credentials) | The boolean flag that CloudFront uses as the value for the `Access-Control-Allow-Credentials` HTTP response header. | `bool` | `false` | no |  |
+| <a name="origin_override"></a> [origin_override](#input\_origin\_override) | Flag to decide how CloudFront behaves for the HTTP response header. | `bool` | `true` | no |  |
+| <a name="max_age"></a> [max_age](#input\_max\_age) | A number that CloudFront uses as the value for the `Access-Control-Max-Age` HTTP response header. | `number` | `600` | no |  |
+| <a name="allowed_origins"></a> [allowed_origins](#input\_allowed\_origins) | List of origins that CloudFront can use as the value for the `Access-Control-Allow-Origin` HTTP response header. | `list(string)` | `[*]` | no |  |
+| <a name="allowed_headers"></a> [allowed_headers](#input\_allowed\_headers) | List of HTTP header names that CloudFront includes as values for the `Access-Control-Allow-Headers` HTTP response header. | `list(string)` | `[*]` | no |  |
+| <a name="allowed_methods"></a> [allowed_methods](#input\_allowed\_methods) | List of HTTP methods that CloudFront includes as values for the `Access-Control-Allow-Methods` HTTP response header. | `list(string)` | `[*]` | no |  |
+| <a name="exposed_headers"></a> [exposed_headers](#input\_exposed\_headers) | List of HTTP headers that CloudFront includes as values for the `Access-Control-Expose-Headers` HTTP response header. | `list(string)` | `[]` | no |  |
+
+##### Security Headers
+
+| Name | Description | Type | Default | Required | Example |
+|:------|:------|:------|:------|:------:|:------|
+| <a name="configure_strict_transport_security"></a> [configure_strict_transport_security](#input\_configure\_strict\_transport\_security) | Flag to decide if configure `Strict-Transport-Security` response header. | `bool` | `false` | no |  |
+| <a name="strict_transport_security"></a> [strict_transport_security](#strict\_transport\_security) | Map of `Strict-Transport-Security` response header configuration | `any` | `{}` | no |  |
+| <a name="configure_content_type_options"></a> [configure_content_type_options](#input\_configure\_content\_type\_options) | Flag to decide if CloudFront adds the `X-Content-Type-Options` header to responses. | `bool` | `false` | no |  |
+| <a name="content_type_options_override_origin"></a> [content_type_options_override_origin](#input\_content\_type\_options\_override\_origin) | Flag to decide if Cloudfront overrides the `X-Content-Type-Options` HTTP response header received from the origin with the one specified in this response headers policy. | `bool` | `true` | no |  |
+| <a name="configure_frame_options"></a> [configure_frame_options](#input\_configure\_frame\_options) | Flag to decide if CloudFront adds the `X-Frame-Options` header to responses. | `bool` | `false` | no |  |
+| <a name="frame_option"></a> [frame_option](#input\_frame\_option) | The value of the `X-Frame-Options` HTTP response header. | `string` | `"DENY"` | no |  |
+| <a name="frame_options_override_origin"></a> [frame_options_override_origin](#input\_frame\_options\_override\_origin) | Flag to decide if Cloudfront overrides the `X-Frame-Options` HTTP response header received from the origin with the one specified in this response headers policy. | `bool` | `true` | no |  |
+| <a name="configure_xss_protection"></a> [configure_xss_protection](#input\_configure\_xss\_protection) | Flag to decide if configure `X-XSS-Protection` response header. | `bool` | `false` | no |  |
+| <a name="xss_protection"></a> [xss_protection](#xss\_protection) | Map of `X-XSS-Protection` response header configuration | `any` | `{}` | no |  |
+| <a name="configure_referrer_policy"></a> [configure_referrer_policy](#input\_configure\_referrer\_policy) | Flag to decide if configure `Referrer-Policy` response header. | `bool` | `false` | no |  |
+| <a name="referrer_policy"></a> [referrer_policy](#referrer\_policy) | Map of `Referrer-Policy` response header configuration | `any` | `{}` | no |  |
+| <a name="configure_content_security_policy"></a> [configure_content_security_policy](#input\_configure\_content\_security\_policy) | Flag to decide if configure `Content-Security-Policy` response header. | `bool` | `false` | no |  |
+| <a name="content_security_policy"></a> [content_security_policy](#content\_security\_policy) | Map of `Content-Security-Policy` response header configuration | `any` | `{}` | no |  |
+
+##### Custom Headers
+
+| Name | Description | Type | Default | Required | Example |
+|:------|:------|:------|:------|:------:|:------|
+| <a name="custom_headers"></a> [custom_headers](#custom\_headers) | List of Map for Custom Headers | `any` | `[]` | no |  |
+
+##### Server-Timing Header
+
+| Name | Description | Type | Default | Required | Example |
+|:------|:------|:------|:------|:------:|:------|
+| <a name="enable_server_timing_header"></a> [enable_server_timing_header](#input\_enable\_server\_timing\_header) | FLag to decide if Cloudfront show set `Server-Timing` header in HTTP responses. | `bool` | `false` | no |  |
+| <a name="sampling_rate"></a> [sampling_rate](#input\_sampling\_rate) | A number 0–100 (inclusive) that specifies the percentage of responses that you want CloudFront to add the Server-Timing header to.  | `number` | `0` | no |  |
 
 #### edge_lambda_functions
 
@@ -242,6 +297,43 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="stream_arn"></a> [stream_arn](#input\_stream\_arn) | The ARN of the Kinesis data stream where real-time log data is sent. | `string` |  | yes |  |
 | <a name="role_arn"></a> [role_arn](#input\_role\_arn) | The ARN of an IAM role that CloudFront can use to send real-time log data to the Kinesis data stream. | `string` | `null` | no |  |
 
+#### Response Headers Policy - Nested Maps
+
+##### strict_transport_security
+| Name | Description | Type | Default | Required | Example |
+|:------|:------|:------|:------|:------:|:------|
+| <a name="max_age_sec"></a> [max_age_sec](#input\_max\_age\_sec) | A number that CloudFront uses as the value for the `max-age` directive in the `Strict-Transport-Security` HTTP response header. | `number` | `31536000` | no |  |
+| <a name="include_subdomains"></a> [include_subdomains](#input\_include\_subdomains) | Flag to decide if CloudFront includes the `includeSubDomains` directive in the `Strict-Transport-Security` HTTP response header. | `bool` | `false` | no |  |
+| <a name="origin_override"></a> [origin_override](#input\_origin\_override) | Flag to decide if CloudFront overrides the `Strict-Transport-Security` HTTP response header received from the origin with the one specified in this response headers policy. | `bool` | `true` | no |  |
+| <a name="preload"></a> [preload](#input\_preload) | Flag to decide if CloudFront includes the preload directive in the `Strict-Transport-Security` HTTP response header. | `bool` | `false` | no |  |
+
+##### xss_protection
+| Name | Description | Type | Default | Required | Example |
+|:------|:------|:------|:------|:------:|:------|
+| <a name="mode_block"></a> [mode_block](#input\_mode\_block) | Flag to decide if CloudFront includes the `mode=block` directive in the X-XSS-Protection header. | `bool` | `false` | no |  |
+| <a name="override_origin"></a> [override_origin](#input\_override\_origin) | Flag to decide if CloudFront overrides the `X-XSS-Protection` HTTP response header received from the origin with the one specified in this response headers policy. | `bool` | `true` | no |  |
+| <a name="protection"></a> [protection](#input\_protection) | Flag to decide if protection is enabled. | `bool` | `true` | no |  |
+| <a name="report_uri"></a> [report_uri](#input\_report\_uri) | A reporting URI, which CloudFront uses as the value of the report directive in the X-XSS-Protection header. | `string` | `null` | no |  |
+
+##### referrer_policy
+| Name | Description | Type | Default | Required | Example |
+|:------|:------|:------|:------|:------:|:------|
+| <a name="policy"></a> [policy](#input\_policy) | The value of the `Referrer-Policy` HTTP response header. | `string` | `"no-referrer"` | no |  |
+| <a name="override_origin"></a> [override_origin](#input\_override\_origin) | Flag to decide if CloudFront overrides the `Referrer-Policy` HTTP response header received from the origin with the one specified in this response headers policy. | `bool` | `true` | no |  |
+
+##### content_security_policy
+| Name | Description | Type | Default | Required | Example |
+|:------|:------|:------|:------|:------:|:------|
+| <a name="policy"></a> [policy](#input\_policy) | The value of the `Content-Security-Policy` HTTP response header. | `string` |  | yes |  |
+| <a name="override_origin"></a> [override_origin](#input\_override\_origin) | Flag to decide if CloudFront overrides the `Content-Security-Policy` HTTP response header received from the origin with the one specified in this response headers policy. | `bool` | `true` | no |  |
+
+##### custom_headers
+| Name | Description | Type | Default | Required | Example |
+|:------|:------|:------|:------|:------:|:------|
+| <a name="header"></a> [header](#input\_header) | The HTTP response header name. | `string` |  | yes |  |
+| <a name="value"></a> [value](#input\_value) | The value for the HTTP response header. | `string` |  | yes |  |
+| <a name="override_origin"></a> [override_origin](#input\_override\_origin) | Flag to decide if CloudFront overrides a response header with the same name received from the origin with this header. | `bool` | `true` | no |  |
+
 ### Outputs
 
 | Name | Type | Description |
@@ -257,8 +349,9 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="public_key_id"></a> [public_key_id](#output\_public\_key\_id) | `string` | The identifier for the public key. |
 | <a name="public_key_etag"></a> [public_key_etag](#output\_public\_key\_etag) | `string` | The current version of the public key. |
 | <a name="monitoring_subscription_id"></a> [monitoring_subscription_id](#output\_monitoring\_subscription\_id) | `string` | The ID of the CloudFront monitoring subscription. |
-| <a name="origin_request_policies"></a> [origin_request_policies](#output\_origin\_request\_policies) | `map(map(string))` | Map of The Origin Request Policies where each entry will be a key-pair of Origin Request Policy Name and nested map of attributes (id and etag) for the policy. |
 | <a name="cache_policies"></a> [cache_policies](#output\_cache\_policies) | `map(map(string))` | Map of The Cache Policies where each entry will be a key-pair of Cache Policy Name and nested map of attributes (id and etag) for the policy. |
+| <a name="origin_request_policies"></a> [origin_request_policies](#output\_origin\_request\_policies) | `map(map(string))` | Map of The Origin Request Policies where each entry will be a key-pair of Origin Request Policy Name and nested map of attributes (id and etag) for the policy. |
+| <a name="response_headers_policies"></a> [response_headers_policies](#output\_response\_headers\_policies) | `map(map(string))` | Map of The Cache Policies where each entry will be a key-pair of Response Headers Policy Name and nested map of attributes (id and etag) for the policy. |
 | <a name="realtime_log_configs"></a> [realtime_log_configs](#output\_realtime\_log\_configs) | `map(map(string))` | Map of The Realtime Log COnfigurations where each entry will be a key-pair of Log Configuration Name and nested map of attributes (id and arn) for the configuration. |
 | <a name="log_configuration_role"></a> [log_configuration_role](#output\_log\_configuration\_role) | `string` | The ARN of an IAM role that CloudFront can use to send real-time log data to the Kinesis data stream. |
 

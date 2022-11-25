@@ -102,6 +102,7 @@ resource aws_cloudfront_distribution "this" {
 
         cache_policy_id = can(var.default_cache_behavior.cache_policy_name) ? aws_cloudfront_cache_policy.this[var.default_cache_behavior.cache_policy_name].id : null
         origin_request_policy_id = can(var.default_cache_behavior.origin_request_policy_name) ? aws_cloudfront_origin_request_policy.this[var.default_cache_behavior.origin_request_policy_name].id : null
+        response_headers_policy_id = try(var.default_cache_behavior.response_headers_policy_name, "") == "" ? null : aws_cloudfront_response_headers_policy.this[var.default_cache_behavior.response_headers_policy_name].arn
 
         dynamic "forwarded_values" {
             for_each = try(cache_behavior.value.handle_forwarding, false) ? [1] : []
@@ -157,7 +158,7 @@ resource aws_cloudfront_distribution "this" {
             max_ttl     = try(cache_behavior.value.max_ttl, 31536000) ## default 31536000 seconds (i.e.365 days)
             
             smooth_streaming = try(cache_behavior.value.smooth_streaming, true)
-            realtime_log_config_arn = try(var.default_cache_behavior.realtime_log_config_name, "") == "" ? null : realtime_log_config.this[var.default_cache_behavior.realtime_log_config_name].arn
+            realtime_log_config_arn = try(cache_behavior.value.realtime_log_config_name, "") == "" ? null : realtime_log_config.this[cache_behavior.value.realtime_log_config_name].arn
 
             ## TO DO
             # field_level_encryption_id = null
@@ -167,6 +168,7 @@ resource aws_cloudfront_distribution "this" {
 
             cache_policy_id = can(cache_behavior.value.cache_policy_name) ? aws_cloudfront_cache_policy.this[cache_behavior.value.cache_policy_name].id : null
             origin_request_policy_id = can(cache_behavior.value.origin_request_policy_name) ? aws_cloudfront_origin_request_policy.this[cache_behavior.value.origin_request_policy_name].id : null
+            response_headers_policy_id = try(cache_behavior.value.response_headers_policy_name, "") == "" ? null : aws_cloudfront_response_headers_policy.this[cache_behavior.value.response_headers_policy_name].arn
 
             dynamic "forwarded_values" {
                 for_each = try(cache_behavior.value.handle_forwarding, false) ? [1] : []
