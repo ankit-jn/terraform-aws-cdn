@@ -23,7 +23,73 @@ output "hosted_zone_id" {
     value       = aws_cloudfront_distribution.this.hosted_zone_id
 }
 
-## Origin Access Identity
+## Policies
+
+#### Cache Policy
+output "cache_policies" {
+    description = "The Map of attributes for Cache Policies."
+    value       = { for name, policy in aws_cloudfront_cache_policy.this:
+                            name => {
+                                id = policy.id
+                                etag  = policy.etag
+                            }}
+}
+
+#### Origin Request Policy
+output "origin_request_policies" {
+    description = "The Map of attributes for Origin Request Policies."
+    value       = { for name, policy in aws_cloudfront_origin_request_policy.this:
+                            name => {
+                                id = policy.id
+                                etag  = policy.etag
+                            }}
+}
+
+#### Response Headers Policy
+output "response_headers_policies" {
+    description = "The Map of attributes for Response Headers Policies."
+    value       = { for name, policy in aws_cloudfront_response_headers_policy.this:
+                            name => {
+                                id = policy.id
+                                etag  = policy.etag
+                            }}
+}
+
+## Cloudfront Functions
+output "functions" {
+    description = "The Map of attributes for Cloudfront Function."
+    value       = { for name, function in aws_cloudfront_function.this:
+                            name => {
+                                arn = function.arn
+                                etag  = function.etag
+                                status  = function.status
+                            }}
+}
+
+## Telemetry
+output "monitoring_subscription_id" {
+    description = "The ID of the CloudFront monitoring subscription."
+    value       = aws_cloudfront_monitoring_subscription.this.id
+}
+
+#### Realtime Log Configurations
+output "realtime_log_configs" {
+    description = "The map of Attributes for Realtime Log Configurations."
+    value       = { for name, config in aws_cloudfront_realtime_log_config.this:
+                            name => {
+                                id = config.id
+                                etag  = config.arn
+                            }}
+}
+
+output "log_configuration_role" {
+    description = "The ARN of an IAM role that CloudFront can use to send real-time log data to the Kinesis data stream."
+    value       = var.create_realtime_logging_role ? aws_iam_role.this[0].arn : ""
+}
+
+## Security
+
+### Origin Access Identity
 output "oai_etag" {
     description = "Current version of the origin access identity's information."
     value       = aws_cloudfront_origin_access_identity.this.etag
@@ -39,62 +105,24 @@ output "oai_path" {
     value       = aws_cloudfront_origin_access_identity.this.cloudfront_access_identity_path
 }
 
-## Cloudfront Public Key
-output "public_key_id" {
-    description = "The identifier for the public key."
-    value       = aws_cloudfront_public_key.this.id
-}
+## Key Management
 
-output "public_key_etag" {
-    description = "The current version of the public key."
-    value       = aws_cloudfront_public_key.this.etag
-}
-
-output "monitoring_subscription_id" {
-    description = "The ID of the CloudFront monitoring subscription."
-    value       = aws_cloudfront_monitoring_subscription.this.id
-}
-
-## Cache Policy
-output "cache_policies" {
-    description = "The Map of attributes for Cache Policies."
-    value       = { for name, policy in aws_cloudfront_cache_policy.this:
+### Public Keys
+output "public_keys" {
+    description = "The Map of attributes for Public Keys."
+    value       = { for name, key in aws_cloudfront_public_key.this:
                             name => {
-                                id = policy.id
-                                etag  = policy.etag
+                                id = key.id
+                                etag  = key.etag
                             }}
 }
 
-## Origin Request Policy
-output "origin_request_policies" {
-    description = "The Map of attributes for Origin Request Policies."
-    value       = { for name, policy in aws_cloudfront_origin_request_policy.this:
+### Key Groups
+output "key_groups" {
+    description = "The Map of attributes for Key Groups."
+    value       = { for name, group in aws_cloudfront_key_group.this:
                             name => {
-                                id = policy.id
-                                etag  = policy.etag
+                                id = group.id
+                                etag  = group.etag
                             }}
-}
-
-## Response Headers Policy
-output "response_headers_policies" {
-    description = "The Map of attributes for Response Headers Policies."
-    value       = { for name, policy in aws_cloudfront_response_headers_policy.this:
-                            name => {
-                                id = policy.id
-                                etag  = policy.etag
-                            }}
-}
-## Realtime Log Configurations
-output "realtime_log_configs" {
-    description = "The map of Attributes for Realtime Log Configurations."
-    value       = { for name, config in aws_cloudfront_realtime_log_config.this:
-                            name => {
-                                id = config.id
-                                etag  = config.arn
-                            }}
-}
-
-output "log_configuration_role" {
-    description = "The ARN of an IAM role that CloudFront can use to send real-time log data to the Kinesis data stream."
-    value       = var.create_realtime_logging_role ? aws_iam_role.this[0].arn : ""
 }

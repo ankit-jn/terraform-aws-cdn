@@ -374,17 +374,18 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="status"></a> [status](#output\_status) | `string` | The current status of the distribution. |
 | <a name="domain_name"></a> [domain_name](#output\_domain\_name) | `string` | The domain name corresponding to the distribution. |
 | <a name="hosted_zone_id"></a> [hosted_zone_id](#output\_hosted\_zone\_id) | `string` | The CloudFront Route 53 zone ID that can be used to route an Alias Resource Record Set to. |
+| <a name="cache_policies"></a> [cache_policies](#output\_cache\_policies) | `map(map(string))` | Map of the Cache Policies where each entry will be a key-pair of Cache Policy Name and nested map of attributes (id and etag) for the policy. |
+| <a name="origin_request_policies"></a> [origin_request_policies](#output\_origin\_request\_policies) | `map(map(string))` | Map of the Origin Request Policies where each entry will be a key-pair of Origin Request Policy Name and nested map of attributes (id and etag) for the policy. |
+| <a name="response_headers_policies"></a> [response_headers_policies](#output\_response\_headers\_policies) | `map(map(string))` | Map of the Cache Policies where each entry will be a key-pair of Response Headers Policy Name and nested map of attributes (id and etag) for the policy. |
+| <a name="functions"></a> [functions](#output\_functions) | `map(map(string))` | Map of The Cloudfront Functions where each entry will be a key-pair of Cloudfront function Name and nested map of attributes (arn, etag and status) for the Functions. |
+| <a name="monitoring_subscription_id"></a> [monitoring_subscription_id](#output\_monitoring\_subscription\_id) | `string` | The ID of the CloudFront monitoring subscription. |
+| <a name="realtime_log_configs"></a> [realtime_log_configs](#output\_realtime\_log\_configs) | `map(map(string))` | Map of the Realtime Log COnfigurations where each entry will be a key-pair of Log Configuration Name and nested map of attributes (id and arn) for the configuration. |
+| <a name="log_configuration_role"></a> [log_configuration_role](#output\_log\_configuration\_role) | `string` | The ARN of an IAM role that CloudFront can use to send real-time log data to the Kinesis data stream. |
 | <a name="oai_etag"></a> [oai_etag](#output\_oai\_etag) | `string` | Current version of the origin access identity's information. |
 | <a name="oai_iam_arn"></a> [oai_iam_arn](#output\_oai\_iam\_arn) | `string` | Pre-generated ARN for use in S3 bucket policies. |
 | <a name="oai_path"></a> [oai_path](#output\_oai_path) | `string` | A shortcut to the full path for the origin access identity to use in CloudFront. |
-| <a name="public_key_id"></a> [public_key_id](#output\_public\_key\_id) | `string` | The identifier for the public key. |
-| <a name="public_key_etag"></a> [public_key_etag](#output\_public\_key\_etag) | `string` | The current version of the public key. |
-| <a name="monitoring_subscription_id"></a> [monitoring_subscription_id](#output\_monitoring\_subscription\_id) | `string` | The ID of the CloudFront monitoring subscription. |
-| <a name="cache_policies"></a> [cache_policies](#output\_cache\_policies) | `map(map(string))` | Map of The Cache Policies where each entry will be a key-pair of Cache Policy Name and nested map of attributes (id and etag) for the policy. |
-| <a name="origin_request_policies"></a> [origin_request_policies](#output\_origin\_request\_policies) | `map(map(string))` | Map of The Origin Request Policies where each entry will be a key-pair of Origin Request Policy Name and nested map of attributes (id and etag) for the policy. |
-| <a name="response_headers_policies"></a> [response_headers_policies](#output\_response\_headers\_policies) | `map(map(string))` | Map of The Cache Policies where each entry will be a key-pair of Response Headers Policy Name and nested map of attributes (id and etag) for the policy. |
-| <a name="realtime_log_configs"></a> [realtime_log_configs](#output\_realtime\_log\_configs) | `map(map(string))` | Map of The Realtime Log COnfigurations where each entry will be a key-pair of Log Configuration Name and nested map of attributes (id and arn) for the configuration. |
-| <a name="log_configuration_role"></a> [log_configuration_role](#output\_log\_configuration\_role) | `string` | The ARN of an IAM role that CloudFront can use to send real-time log data to the Kinesis data stream. |
+| <a name="public_keys"></a> [public_keys](#output\_public\_keys) | `string` | Map of the Public Keys where each entry will be a key-pair of Key Name and nested map of attributes (id and etag) for the Public Key. |
+| <a name="key_groups"></a> [key_groups](#output\_key\_groups) | `string` | Map of the Key Groups where each entry will be a key-pair of Group Name and nested map of attributes (id and etag) for the Key Group. |
 
 ### Authors
 
