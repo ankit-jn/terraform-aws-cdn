@@ -159,6 +159,10 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 
 #### cache_behavior
 
+- Either set `cache_policy_arn` or `cache_policy_name`. `cache_policy_arn` takes preference.
+- Either set `origin_request_policy_arn` or `origin_request_policy_name`. `origin_request_policy_arn` takes preference.
+- Either set `response_headers_policy_arn` or `response_headers_policy_name`. `response_headers_policy_arn` takes preference.
+
 | Name | Description | Type | Default | Required | Example |
 |:------|:------|:------|:------|:------:|:------|
 | <a name="target_origin_id"></a> [target_origin_id](#input\_target\_origin\_id) | The value of ID for the origin that CloudFront will use to route requests to, when a request matches the path pattern either for a cache behavior or for the default cache behavior. | `string` |  | yes |  |
