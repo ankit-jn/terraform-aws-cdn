@@ -30,7 +30,7 @@ variable "price_class" {
     default     = "PriceClass_All"
 
     validation {
-        condition = contains(["PriceClass_100.1", "PriceClass_200", "PriceClass_All"], var.http_version)
+        condition = contains(["PriceClass_100.1", "PriceClass_200", "PriceClass_All"], var.price_class)
         error_message = "Possible Values are `PriceClass_100`, `PriceClass_200`, `PriceClass_All `."
     }
 }
@@ -96,7 +96,7 @@ EOF
     default = {}
 }
 
-variable "geo_restrictions" {
+variable "geo_restriction" {
     description = <<EOF
 (Optional) Configuration map for geo restrictrions:
 
@@ -131,8 +131,6 @@ origin_path: (Optional) Directory in origin from where CloudFront will request t
 domain_name: (Required) The DNS domain name of either the S3 bucket, or web site of your custom origin.
 connection_attempts: (Optional) The number of times that CloudFront attempts to connect to the origin.
 connection_timeout: (Optional) The number of seconds that CloudFront waits when trying to establish a connection to the origin.
-origin_access_control_id: (Optional) The unique identifier of a CloudFront origin access control for this origin.
-
 custom_headers: (Optional) The Map of headers (Name/value pairs) to specify header data that will be sent to the origin.
 origin_access_identity: The CloudFront origin access identity to associate with the S3 origin.
 custom_origin_config: Custom origin Configuration Map with following key-pairs:
@@ -178,7 +176,6 @@ The default cache behaviour for the distribution:
 target_origin_id: (Required) The value of ID for the origin that CloudFront will use to route requests to, when a request matches the path pattern either for a cache behavior or for the default cache behavior.
 
 viewer_protocol_policy: (Required) The protocol that users can use to access the files in the origin.
-path_pattern: (Optional) The pattern (for example, images/*.jpg) that specifies which requests this cache behavior to apply to.
 
 allowed_methods: (Optional) The list of HTTP methods that CloudFront processes and forwards to origin.
 cached_methods: (Optional) The list of HTTP methods that CloudFront caches the response to requests for.
@@ -228,7 +225,12 @@ EOF
 }
 
 variable "ordered_cache_behaviors" {
-    description = "List of configuration map of Cache behaviours for the distribution where each entry will be of the same strcuture as `default_cache_behavior`"
+    description = <<EOF
+List of configuration map of Cache behaviours for the distribution where each entry will be of 
+the same strcuture as `default_cache_behavior` except one additional:
+
+path_pattern: (Optional) The pattern (for example, images/*.jpg) that specifies which requests this cache behavior to apply to.
+EOF
     type = any
     default = []
 }
@@ -409,6 +411,8 @@ fields          : (Required) The fields that are included in each real-time log 
 stream_arn      : (Required) The ARN of the Kinesis data stream where real-time log data is sent.
 role_arn        : (Optional) The ARN of an IAM role that CloudFront can use to send real-time log data to the Kinesis data stream.
 EOF
+    type = any
+    default = []
 }
 
 variable "create_realtime_logging_role" {
@@ -417,7 +421,7 @@ variable "create_realtime_logging_role" {
     default     = true
 }
 
-variable "realtime_logging_role" {
+variable "realtime_logging_role_name" {
     description = "IAM Role Name to be provisioned that CloudFront can use to send real-time log data to the Kinesis data streams."
     type        = string
     default     = null

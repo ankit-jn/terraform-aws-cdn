@@ -53,7 +53,7 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | <a name="comments"></a> [comments](#input\_comments) | Any comments to include about the distribution. | `string` | `null` | no |  |
 | <a name="error_responses"></a> [error_responses](#input\_error\_responses) | List of Map with following key/pairs, for custom Error responses to be configured on CDN. | `list(map(string))` | `[]` | no |  |
 | <a name="logging"></a> [logging](#input\_logging) | Configuration map (with following key-pair) of how logs are written to your distribution. | `map(string)` | `{}` | no |  |
-| <a name="geo_restrictions"></a> [geo_restrictions](#input\_geo\_restrictions) | Configuration map for geo restrictrions | `any` | `{}` | no |  |
+| <a name="geo_restriction"></a> [geo_restriction](#input\_geo\_restriction) | Configuration map for geo restrictrions | `any` | `{}` | no |  |
 | <a name="enable_additional_moniroting"></a> [enable_additional_moniroting](#input\_enable\_additional\_moniroting) | Flag to decide if additional CloudWatch metrics are enabled for a CloudFront distribution. | `bool` | `false` | no |  |
 | <a name="tags"></a> [tags](#input\_tags) | A map of tags to assign to the distribution. | `map(string)` | `{}` | no |  |
 

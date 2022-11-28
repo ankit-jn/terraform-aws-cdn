@@ -92,17 +92,17 @@ output "log_configuration_role" {
 ### Origin Access Identity
 output "oai_etag" {
     description = "Current version of the origin access identity's information."
-    value       = aws_cloudfront_origin_access_identity.this.etag
+    value       = var.create_origin_access_identity ? aws_cloudfront_origin_access_identity.this[0].etag : ""
 }
 
 output "oai_iam_arn" {
     description = "Pre-generated ARN for use in S3 bucket policies."
-    value       = aws_cloudfront_origin_access_identity.this.iam_arn
+    value       = var.create_origin_access_identity ? aws_cloudfront_origin_access_identity.this[0].iam_arn : ""
 }
 
 output "oai_path" {
     description = "A shortcut to the full path for the origin access identity to use in CloudFront."
-    value       = aws_cloudfront_origin_access_identity.this.cloudfront_access_identity_path
+    value       = var.create_origin_access_identity ? aws_cloudfront_origin_access_identity.this[0].cloudfront_access_identity_path : ""
 }
 
 ## Key Management

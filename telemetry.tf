@@ -30,8 +30,7 @@ resource aws_iam_role "this" {
 
     count = var.create_realtime_logging_role ? 1 : 0
 
-    name = coalesce(var.realtime_logging_role_name, 
-                        format("cloudfront-%s-realtime-log-config", aws_cloudfront_distribution.this.id))
+    name = var.realtime_logging_role_name
 
     assume_role_policy = <<EOF
 {
@@ -52,8 +51,7 @@ EOF
 resource aws_iam_role_policy "this" {
     count = var.create_realtime_logging_role ? 1 : 0
 
-    name = coalesce(var.realtime_logging_role_name, 
-                        format("cloudfront-%s-realtime-log-config", aws_cloudfront_distribution.this.id))
+    name = var.realtime_logging_role_name
     role = aws_iam_role.this[0].id
 
     policy = <<EOF
@@ -68,7 +66,7 @@ resource aws_iam_role_policy "this" {
           "kinesis:PutRecord",
           "kinesis:PutRecords"
         ],
-        "Resource": ${local.kinesis_resources}
+        "Resource": [ ${local.kinesis_resources} ]
     }
   ]
 }

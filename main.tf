@@ -13,8 +13,6 @@ resource aws_cloudfront_distribution "this" {
             connection_attempts = try(origin.value.connection_attempts, 3)
             connection_timeout  = try(origin.value.connection_timeout, 10)
 
-            origin_access_control_id = try(origin.value.origin_access_control_id, null)
-
             dynamic "s3_origin_config" {
                 for_each = (var.create_origin_access_identity 
                                 || length(try(origin.value.origin_access_identity, "")) > 0) ? [1] : []
@@ -22,12 +20,12 @@ resource aws_cloudfront_distribution "this" {
                 content {
                     origin_access_identity = !var.create_origin_access_identity ? (
                                                     origin.value.origin_access_identity) : (
-                                                                aws_cloudfront_origin_access_identity.this.cloudfront_access_identity_path)
+                                                                aws_cloudfront_origin_access_identity.this[0].cloudfront_access_identity_path)
                 }
             }
         
             dynamic "custom_origin_config" {
-                for_each = [ try(origin.value.custom_origin_config, {}) ]
+                for_each = try([origin.value.custom_origin_config], [])
 
                 content {
                     http_port                = custom_origin_config.value.http_port
@@ -40,7 +38,7 @@ resource aws_cloudfront_distribution "this" {
             }
 
             dynamic "custom_header" {
-                for_each = try(each.value.custom_headers, {})
+                for_each = try(origin.value.custom_headers, {})
 
                 content {
                     name = custom_header.key
@@ -48,12 +46,12 @@ resource aws_cloudfront_distribution "this" {
                 }
             }
 
-            origin_shield {
-                for_each = each.value.enable_origin_shield ? [1] : []
+            dynamic "origin_shield" {
+                for_each = origin.value.enable_origin_shield ? [1] : []
 
                 content {
                     enabled              = true
-                    origin_shield_region = each.value.shield_region
+                    origin_shield_region = origin.value.shield_region
                 }
             }
         }
@@ -80,7 +78,6 @@ resource aws_cloudfront_distribution "this" {
         target_origin_id = var.default_cache_behavior.target_origin_id
 
         viewer_protocol_policy = var.default_cache_behavior.viewer_protocol_policy
-        path_pattern = try(var.default_cache_behavior.path_pattern, "*")
         
         allowed_methods = try(var.default_cache_behavior.allowed_methods, ["GET", "HEAD"])
         cached_methods = try(var.default_cache_behavior.cached_methods, ["GET", "HEAD"])
@@ -95,7 +92,7 @@ resource aws_cloudfront_distribution "this" {
         realtime_log_config_arn =  try(var.default_cache_behavior.realtime_log_config_arn, "") != "" ? (
                                             var.default_cache_behavior.realtime_log_config_arn) : (
                                                 try(var.default_cache_behavior.realtime_log_config_name, "") == "" ? null : (
-                                                        realtime_log_config.this[var.default_cache_behavior.realtime_log_config_name].arn))
+                                                        aws_cloudfront_realtime_log_config.this[var.default_cache_behavior.realtime_log_config_name].arn))
         field_level_encryption_id = try(var.default_cache_behavior.encryption_profile_arn, "") != "" ? (
                                             var.default_cache_behavior.encryption_profile_arn) : (
                                                 try(var.default_cache_behavior.encryption_profile_name, "") == "" ? null : (
@@ -124,21 +121,21 @@ resource aws_cloudfront_distribution "this" {
                                                 aws_cloudfront_response_headers_policy.this[var.default_cache_behavior.response_headers_policy_name].id))
 
         dynamic "forwarded_values" {
-            for_each = try(cache_behavior.value.handle_forwarding, false) ? [1] : []
+            for_each = try(var.default_cache_behavior.handle_forwarding, false) ? [1] : []
             
             content {
                 cookies {
-                    forward = try(cache_behavior.value.cookie_behavior, "none")
-                    whitelisted_names = contains(["all", "none"], lookup(cache_behavior.value, "cookie_behavior", "none")) ? null : split(",", lookup(each.value, "cookies_items", ""))
+                    forward = try(var.default_cache_behavior.cookie_behavior, "none")
+                    whitelisted_names = contains(["all", "none"], lookup(var.default_cache_behavior, "cookie_behavior", "none")) ? null : split(",", lookup(var.default_cache_behavior, "cookies_items", ""))
                 }
-                headers = try(cache_behavior.value.headers, null)
-                query_string = try(cache_behavior.value.query_strings, false)
-                query_string_cache_keys = try(cache_behavior.value.query_strings, false) ? split(",", lookup(each.value, "query_strings_cache_keys", "")) : null
+                headers = try(var.default_cache_behavior.headers, null)
+                query_string = try(var.default_cache_behavior.query_strings, false)
+                query_string_cache_keys = try(var.default_cache_behavior.query_strings, false) ? split(",", lookup(var.default_cache_behavior, "query_strings_cache_keys", "")) : null
             }
         }
 
         dynamic "lambda_function_association" {
-            for_each = try(cache_behavior.value.edge_lambda_functions, {})
+            for_each = try(var.default_cache_behavior.edge_lambda_functions, {})
 
             content {
                 event_type = lambda_function_association.key
@@ -148,7 +145,7 @@ resource aws_cloudfront_distribution "this" {
         }
 
         dynamic "function_association" {
-            for_each = try(cache_behavior.value.cloudfront_functions, {})
+            for_each = try(var.default_cache_behavior.cloudfront_functions, {})
 
             content {
                 event_type = function_association.key
@@ -158,7 +155,7 @@ resource aws_cloudfront_distribution "this" {
     }
 
     dynamic "ordered_cache_behavior" {
-        for_each = var.default_cache_behaviors
+        for_each = var.ordered_cache_behaviors
         iterator = cache_behavior
 
         content {
@@ -181,7 +178,7 @@ resource aws_cloudfront_distribution "this" {
             realtime_log_config_arn =  try(cache_behavior.value.realtime_log_config_arn, "") != "" ? (
                                             cache_behavior.value.realtime_log_config_arn) : (
                                                 try(cache_behavior.value.realtime_log_config_name, "") == "" ? null : (
-                                                        realtime_log_config.this[cache_behavior.value.realtime_log_config_name].arn))
+                                                        aws_cloudfront_realtime_log_config.this[cache_behavior.value.realtime_log_config_name].arn))
             
             field_level_encryption_id = try(cache_behavior.value.encryption_profile_arn, "") != "" ? (
                                             cache_behavior.value.encryption_profile_arn) : (
@@ -279,7 +276,7 @@ resource aws_cloudfront_distribution "this" {
     }
 
     dynamic "logging_config" {
-        for_each = try(length(keys(var.logging)), 0) > 0 ? [1] : 0
+        for_each = try(length(keys(var.logging)), 0) > 0 ? [1] : []
 
         content {
             bucket = var.logging.bucket
@@ -289,9 +286,9 @@ resource aws_cloudfront_distribution "this" {
     }
 
     restrictions {
-        geo_restrictions {
-            restriction_type = try(geo_restrictions.value.restriction_type, "none")
-            locations = try(geo_restrictions.value.locations, [])
+        geo_restriction {
+            restriction_type = try(var.geo_restriction.value.restriction_type, "none")
+            locations = try(var.geo_restriction.value.locations, [])
         }
     }
 
