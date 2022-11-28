@@ -69,7 +69,7 @@ output "functions" {
 ## Telemetry
 output "monitoring_subscription_id" {
     description = "The ID of the CloudFront monitoring subscription."
-    value       = aws_cloudfront_monitoring_subscription.this.id
+    value       = var.create_monitoring_subscription ? aws_cloudfront_monitoring_subscription.this[0].id : ""
 }
 
 #### Realtime Log Configurations
@@ -84,7 +84,7 @@ output "realtime_log_configs" {
 
 output "log_configuration_role" {
     description = "The ARN of an IAM role that CloudFront can use to send real-time log data to the Kinesis data stream."
-    value       = var.create_realtime_logging_role ? aws_iam_role.this[0].arn : ""
+    value       = local.create_realtime_logging_role ? aws_iam_role.this[0].arn : ""
 }
 
 ## Security

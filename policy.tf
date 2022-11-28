@@ -12,22 +12,33 @@ resource aws_cloudfront_cache_policy "this" {
     parameters_in_cache_key_and_forwarded_to_origin {
         cookies_config {
             cookie_behavior = try(each.value.cookie_behavior, "none") 
-            cookies {
-                items = contains(["all", "none"], try(each.value.cookie_behavior, "none")) ? null : split(",", try(each.value.cookies_items, ""))
+            dynamic "cookies" {
+                for_each = contains(["all", "none"], try(each.value.cookie_behavior, "none")) ? [] : [1]
+                content {
+                    items = split(",", try(each.value.cookies_items, ""))
+                }
             }
         }
         
         headers_config {
             header_behavior = try(each.value.header_behavior, "none") 
-            headers {
-                items = (try(each.value.header_behavior, "none") == "none") ? null : split(",", try(each.value.headers_items, ""))
+            dynamic "headers" {
+                for_each = try(each.value.header_behavior, "none") == "none" ? [] : [1]
+                
+                content {
+                    items = split(",", try(each.value.headers_items, ""))
+                }                
             }
         }
 
         query_strings_config {
             query_string_behavior = try(each.value.query_string_behavior, "none") 
-            query_strings {
-                items = (try(each.value.query_string_behavior, "none") == "none") ? null : split(",", try(each.value.query_strings_items, ""))
+            dynamic "query_strings" {
+                for_each = contains(["all", "none"], try(each.value.query_string_behavior, "none")) ? [] : [1]
+                
+                content {
+                    items = split(",", try(each.value.query_strings_items, ""))
+                }
             }
         }
         enable_accept_encoding_brotli = try(each.value.enable_accept_encoding_brotli, true)
@@ -43,22 +54,34 @@ resource aws_cloudfront_origin_request_policy "this" {
 
     cookies_config {
         cookie_behavior = try(each.value.cookie_behavior, "none") 
-        cookies {
-            items = contains(["all", "none"], try(each.value.cookie_behavior, "none")) ? null : split(",", try(each.value.cookies_items, ""))
+        dynamic "cookies" {
+            for_each = contains(["all", "none"], try(each.value.cookie_behavior, "none")) ? [] : [1]
+            
+            content {
+                items =  split(",", try(each.value.cookies_items, ""))
+            }
         }
     }
     
     headers_config {
         header_behavior = try(each.value.header_behavior, "none") 
-        headers {
-            items = (try(each.value.header_behavior, "none") == "none") ? null : split(",", try(each.value.headers_items, ""))
+        dynamic "headers" {
+            for_each = try(each.value.header_behavior, "none") == "none" ? [] : [1]
+
+            content {
+                items = split(",", try(each.value.headers_items, ""))
+            }
         }
     }
 
     query_strings_config {
         query_string_behavior = try(each.value.query_string_behavior, "none") 
-        query_strings {
-            items = (try(each.value.query_string_behavior, "none") == "none") ? null : split(",", try(each.value.query_strings_items, ""))
+        dynamic "query_strings" {
+            for_each = contains(["all", "none"], try(each.value.query_string_behavior, "none")) ? [] : [1]
+            
+            content {
+                items = split(",", try(each.value.query_strings_items, ""))
+            }
         }
     }
 }

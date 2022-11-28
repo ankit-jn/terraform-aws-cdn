@@ -14,8 +14,9 @@ resource aws_cloudfront_distribution "this" {
             connection_timeout  = try(origin.value.connection_timeout, 10)
 
             dynamic "s3_origin_config" {
-                for_each = (var.create_origin_access_identity 
-                                || length(try(origin.value.origin_access_identity, "")) > 0) ? [1] : []
+                for_each = (try(origin.value.is_s3_origin, false)
+                                && (var.create_origin_access_identity 
+                                        || length(try(origin.value.origin_access_identity, "")) > 0)) ? [1] : []
 
                 content {
                     origin_access_identity = !var.create_origin_access_identity ? (
@@ -25,7 +26,8 @@ resource aws_cloudfront_distribution "this" {
             }
         
             dynamic "custom_origin_config" {
-                for_each = try([origin.value.custom_origin_config], [])
+                for_each = try(origin.value.is_s3_origin, false) ? [] : (
+                                                try([origin.value.custom_origin_config], []))
 
                 content {
                     http_port                = custom_origin_config.value.http_port
@@ -93,10 +95,11 @@ resource aws_cloudfront_distribution "this" {
                                             var.default_cache_behavior.realtime_log_config_arn) : (
                                                 try(var.default_cache_behavior.realtime_log_config_name, "") == "" ? null : (
                                                         aws_cloudfront_realtime_log_config.this[var.default_cache_behavior.realtime_log_config_name].arn))
-        field_level_encryption_id = try(var.default_cache_behavior.encryption_profile_arn, "") != "" ? (
-                                            var.default_cache_behavior.encryption_profile_arn) : (
-                                                try(var.default_cache_behavior.encryption_profile_name, "") == "" ? null : (
-                                                        aws_cloudfront_field_level_encryption_profile.this[var.default_cache_behavior.encryption_profile_name].id))
+        ## TODO Need to use Encryption Config instead of Encryption Profile
+        # field_level_encryption_id = try(var.default_cache_behavior.encryption_profile_arn, "") != "" ? (
+        #                                     var.default_cache_behavior.encryption_profile_arn) : (
+        #                                         try(var.default_cache_behavior.encryption_profile_name, "") == "" ? null : (
+        #                                                 aws_cloudfront_field_level_encryption_profile.this[var.default_cache_behavior.encryption_profile_name].id))
         
         trusted_signers     = try(var.default_cache_behavior.trusted_signers, null)
         trusted_key_groups  = (can(var.default_cache_behavior.trusted_key_group_names) 
@@ -116,12 +119,14 @@ resource aws_cloudfront_distribution "this" {
                                                 aws_cloudfront_origin_request_policy.this[var.default_cache_behavior.origin_request_policy_name].id))
 
         response_headers_policy_id = try(var.default_cache_behavior.response_headers_policy_arn, "") != "" ? (
-                                    var.default_cache_behavior.response_headers_policy_arn) : (
-                                            try(var.default_cache_behavior.response_headers_policy_name, "") == "" ? null : (
-                                                aws_cloudfront_response_headers_policy.this[var.default_cache_behavior.response_headers_policy_name].id))
+                                            var.default_cache_behavior.response_headers_policy_arn) : (
+                                                try(var.default_cache_behavior.response_headers_policy_name, "") == "" ? null : (
+                                                    aws_cloudfront_response_headers_policy.this[var.default_cache_behavior.response_headers_policy_name].id))
 
         dynamic "forwarded_values" {
-            for_each = try(var.default_cache_behavior.handle_forwarding, false) ? [1] : []
+            for_each = (try(var.default_cache_behavior.cache_policy_arn, "") != "" 
+                            || try(var.default_cache_behavior.cache_policy_name, "") != "") ? [] : (
+                                    try(var.default_cache_behavior.handle_forwarding, false) ? [1] : [])
             
             content {
                 cookies {
@@ -180,10 +185,11 @@ resource aws_cloudfront_distribution "this" {
                                                 try(cache_behavior.value.realtime_log_config_name, "") == "" ? null : (
                                                         aws_cloudfront_realtime_log_config.this[cache_behavior.value.realtime_log_config_name].arn))
             
-            field_level_encryption_id = try(cache_behavior.value.encryption_profile_arn, "") != "" ? (
-                                            cache_behavior.value.encryption_profile_arn) : (
-                                                try(cache_behavior.value.encryption_profile_name, "") == "" ? null : (
-                                                        aws_cloudfront_field_level_encryption_profile.this[cache_behavior.value.encryption_profile_name].id))
+            ## TODO Need to use Encryption Config instead of Encryption Profile
+            # field_level_encryption_id = try(cache_behavior.value.encryption_profile_arn, "") != "" ? (
+            #                                 cache_behavior.value.encryption_profile_arn) : (
+            #                                     try(cache_behavior.value.encryption_profile_name, "") == "" ? null : (
+            #                                             aws_cloudfront_field_level_encryption_profile.this[cache_behavior.value.encryption_profile_name].id))
             
             trusted_signers     = try(cache_behavior.value.trusted_signers, null)
             trusted_key_groups  = (can(cache_behavior.value.trusted_key_group_names) 
@@ -208,7 +214,9 @@ resource aws_cloudfront_distribution "this" {
                                                     aws_cloudfront_response_headers_policy.this[cache_behavior.value.response_headers_policy_name].id))
 
             dynamic "forwarded_values" {
-                for_each = try(cache_behavior.value.handle_forwarding, false) ? [1] : []
+                for_each = (try(var.default_cache_behavior.cache_policy_arn, "") != "" 
+                            || try(var.default_cache_behavior.cache_policy_name, "") != "") ? [] : (
+                                    try(cache_behavior.value.handle_forwarding, false) ? [1] : [])
                 
                 content {
                     cookies {
@@ -295,8 +303,10 @@ resource aws_cloudfront_distribution "this" {
     tags = var.tags
 
     depends_on = [
-      aws_cloudfront_function.this,
+      aws_cloudfront_cache_policy.this,
       aws_cloudfront_origin_request_policy.this,
-      aws_cloudfront_cache_policy.this
+      aws_cloudfront_response_headers_policy.this,
+      aws_cloudfront_key_group.this,
+      aws_cloudfront_field_level_encryption_profile.this
     ]
 }

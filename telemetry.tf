@@ -1,5 +1,7 @@
 resource aws_cloudfront_monitoring_subscription "this" {
   
+    count = var.create_monitoring_subscription ? 1 : 0
+    
     distribution_id = aws_cloudfront_distribution.this.id
 
     monitoring_subscription {
@@ -20,7 +22,7 @@ resource aws_cloudfront_realtime_log_config "this" {
         stream_type = "Kinesis"
 
         kinesis_stream_config {
-            role_arn   = var.create_realtime_logging_role ? aws_iam_role.this[0].arn : each.value.role_arn
+            role_arn   = local.create_realtime_logging_role ? aws_iam_role.this[0].arn : each.value.role_arn
             stream_arn = each.value.kinesis_stream_arn
         }
     }
@@ -28,7 +30,7 @@ resource aws_cloudfront_realtime_log_config "this" {
 
 resource aws_iam_role "this" {
 
-    count = var.create_realtime_logging_role ? 1 : 0
+    count = local.create_realtime_logging_role ? 1 : 0
 
     name = var.realtime_logging_role_name
 
@@ -49,7 +51,7 @@ EOF
 }
 
 resource aws_iam_role_policy "this" {
-    count = var.create_realtime_logging_role ? 1 : 0
+    count = local.create_realtime_logging_role ? 1 : 0
 
     name = var.realtime_logging_role_name
     role = aws_iam_role.this[0].id

@@ -100,6 +100,7 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | Name | Description | Type | Default | Required | Example|
 |:------|:------|:------|:------|:------:|:------|
 | <a name="realtime_log_configs"></a> [realtime_log_configs](#realtime\_log\_configs) | List of Configuration Maps for CloudFront real-time log | `any` | `[]` | no |  |
+| <a name="create_monitoring_subscription"></a> [create_monitoring_subscription](#input\_create\_monitoring\_subscription) | Flag to decide if Monirotingg subscription exists. | `bool` | `false` | no |  |
 | <a name="create_realtime_logging_role"></a> [create_realtime_logging_role](#input\_create\_realtime\_logging\_role) | Flag to decide if IAM role needs to be provisioned that CloudFront can use to send real-time log data to the Kinesis data streams. | `bool` | `true` | no |  |
 | <a name="realtime_logging_role"></a> [realtime_logging_role](#input\_realtime\_logging\_role) | IAM Role Name to be provisioned that CloudFront can use to send real-time log data to the Kinesis data streams. | `string` | `null` | no |  |
 
@@ -126,6 +127,7 @@ Refer [Configuration Examples](https://github.com/arjstack/terraform-aws-example
 | Name | Description | Type | Default | Required | Example |
 |:------|:------|:------|:------|:------:|:------|
 | <a name="origin_id"></a> [origin_id](#input\_origin\_id) | A unique identifier for the origin. | `string` |  | yes |  |
+| <a name="is_s3_origin"></a> [is_s3_origin](#input\_is\_s3\_origin) | Flag to decide if Origin is S3 or custom | `bool` |  | false |  |
 | <a name="origin_path"></a> [origin_path](#input\_origin\_path) | Directory in origin from where CloudFront will request the content from. | `string` | `""` | no |  |
 | <a name="domain_name"></a> [domain_name](#input\_domain\_name) | The DNS domain name of either the S3 bucket, or web site of your custom origin. | `string` |  | yes |  |
 | <a name="connection_attempts"></a> [connection_attempts](#input\_connection\_attempts) | The number of times that CloudFront attempts to connect to the origin. | `number` | `3` | no |  |

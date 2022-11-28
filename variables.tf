@@ -127,6 +127,7 @@ variable "origins" {
 List of Cloudfront Distribution's Origins Configiration Map with following key-pairs
 
 origin_id: (Required) A unique identifier for the origin.
+is_s3_origin: (Optional, default false) Flag to decide if Origin is S3 or custom
 origin_path: (Optional) Directory in origin from where CloudFront will request the content from.
 domain_name: (Required) The DNS domain name of either the S3 bucket, or web site of your custom origin.
 connection_attempts: (Optional) The number of times that CloudFront attempts to connect to the origin.
@@ -413,6 +414,12 @@ role_arn        : (Optional) The ARN of an IAM role that CloudFront can use to s
 EOF
     type = any
     default = []
+}
+
+variable "create_monitoring_subscription" {
+    description = "Flag to decide if Monirotingg subscription exists."
+    type        = bool
+    default     = false
 }
 
 variable "create_realtime_logging_role" {

@@ -10,6 +10,12 @@ resource aws_cloudfront_public_key "this" {
     name        = each.key
     comment     = coalesce(try(each.value.comments, ""), each.key)
     encoded_key = file("${path.root}/${each.value.key_file}")   
+
+    lifecycle {
+      ignore_changes = [
+       encoded_key 
+      ]
+    }
 }
 
 resource aws_cloudfront_key_group "this" {
@@ -18,6 +24,10 @@ resource aws_cloudfront_key_group "this" {
     name        = each.key
     comment     = coalesce(try(each.value.comments, ""), each.key)
     items       = [for key_name in split(",", each.value.keys): aws_cloudfront_public_key.this[key_name].id]
+
+    depends_on = [
+        aws_cloudfront_public_key.this
+    ]
 }
 
 resource aws_cloudfront_field_level_encryption_profile "this" {
@@ -36,4 +46,8 @@ resource aws_cloudfront_field_level_encryption_profile "this" {
             }
         }
     }
+
+    depends_on = [
+        aws_cloudfront_public_key.this
+    ]
 }
